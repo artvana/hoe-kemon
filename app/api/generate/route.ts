@@ -17,8 +17,9 @@ export async function POST(req: NextRequest) {
   try {
     instagramData = await fetchInstagramData(connectionId)
   } catch (err) {
-    console.error('[ODL] Failed to fetch Instagram data:', err)
-    return NextResponse.json({ error: 'Failed to fetch Instagram data' }, { status: 500 })
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error('[ODL] Failed to fetch Instagram data:', msg)
+    return NextResponse.json({ error: `ODL fetch failed: ${msg}` }, { status: 500 })
   }
 
   // 2. Generate Hoekemon with Claude
