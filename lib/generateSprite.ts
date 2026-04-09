@@ -2,40 +2,20 @@ import Replicate from 'replicate'
 
 const replicate = new Replicate({ auth: process.env.REPLICATE_API_TOKEN })
 
-const PROMPT_SUFFIX =
-  ', pixel art, Game Boy Color style, black outline, limited 16-color palette, white background, centered, no text, no background scenery, 96x96 pixels'
-const NEGATIVE =
-  'realistic, photograph, 3d render, blurry, watermark, text, background scenery, multiple creatures, human, anime'
-
 export async function startSpriteGeneration(visualDescription: string): Promise<string> {
-  const prompt = `Gen 1 Pokemon sprite, ${visualDescription}${PROMPT_SUFFIX}`
+  // lambdal/text-to-pokemon — generates Pokémon-style illustrated creatures
+  const prompt = visualDescription.slice(0, 300)
 
-  try {
-    const prediction = await replicate.predictions.create({
-      model: 'fofr/pokemon-sdxl',
-      input: {
-        prompt,
-        negative_prompt: NEGATIVE,
-        width: 512,
-        height: 512,
-        num_inference_steps: 30,
-        guidance_scale: 7.5,
-      },
-    })
-    return prediction.id
-  } catch {
-    // Fall back to sdxl
-    const prediction = await replicate.predictions.create({
-      model: 'stability-ai/sdxl',
-      input: {
-        prompt,
-        negative_prompt: NEGATIVE,
-        width: 512,
-        height: 512,
-      },
-    })
-    return prediction.id
-  }
+  const prediction = await replicate.predictions.create({
+    version: 'ff6cc781634191dd3c49097a615d2fc01b0a8aae31c448e55039a04dcbf36bba',
+    input: {
+      prompt,
+      num_inference_steps: 20,
+      guidance_scale: 7.5,
+      num_outputs: 1,
+    },
+  })
+  return prediction.id
 }
 
 export async function getSpriteStatus(

@@ -9,114 +9,123 @@ interface HoekemonCardProps {
   forCapture?: boolean
 }
 
-function hexToRgba(hex: string, alpha: number): string {
+function darkenHex(hex: string, amount = 0.55): string {
+  const r = Math.round(parseInt(hex.slice(1, 3), 16) * amount)
+  const g = Math.round(parseInt(hex.slice(3, 5), 16) * amount)
+  const b = Math.round(parseInt(hex.slice(5, 7), 16) * amount)
+  return `rgb(${r},${g},${b})`
+}
+
+function lightenHex(hex: string, amount = 0.45): string {
   const r = parseInt(hex.slice(1, 3), 16)
   const g = parseInt(hex.slice(3, 5), 16)
   const b = parseInt(hex.slice(5, 7), 16)
-  return `rgba(${r},${g},${b},${alpha})`
+  return `rgb(${Math.min(255, r + Math.round((255 - r) * amount))},${Math.min(255, g + Math.round((255 - g) * amount))},${Math.min(255, b + Math.round((255 - b) * amount))})`
 }
 
-function TypePill({ type }: { type: string }) {
+function EnergySymbol({ type }: { type: string }) {
+  const bg = TYPE_COLOURS[type] ?? '#A8A878'
+  const fg = TYPE_TEXT_COLOURS[type] ?? '#000'
   return (
-    <span
+    <div
       style={{
-        fontFamily: "'Press Start 2P', monospace",
-        fontSize: 5,
-        background: TYPE_COLOURS[type] ?? '#A8A878',
-        color: TYPE_TEXT_COLOURS[type] ?? '#000',
-        padding: '2px 6px',
-        display: 'inline-block',
-        lineHeight: 1.8,
-        marginLeft: 4,
+        width: 16,
+        height: 16,
+        borderRadius: '50%',
+        background: bg,
+        border: '1.5px solid rgba(0,0,0,0.4)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexShrink: 0,
       }}
     >
-      {type.toUpperCase()}
-    </span>
+      <span style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 4, color: fg, lineHeight: 1 }}>
+        {type[0]}
+      </span>
+    </div>
   )
 }
 
 export default function HoekemonCard({ data, spriteUrl, forCapture = false }: HoekemonCardProps) {
   const type1Colour = TYPE_COLOURS[data.type1] ?? '#A8A878'
-  const retreatCost = Math.min(4, Math.round(data.stats.drama / 30))
+  const borderColour = darkenHex(type1Colour)
+  const illoBg = lightenHex(type1Colour)
+  const retreatCost = Math.max(1, Math.min(4, Math.round(data.stats.drama / 30)))
+  const headerText = TYPE_TEXT_COLOURS[data.type1] ?? '#000'
 
   const card = (
     <div
       style={{
         width: 500,
         height: 700,
-        borderRadius: 12,
+        borderRadius: 16,
         background: '#F5E6C8',
-        border: '8px solid #2D5A1B',
-        padding: 4,
+        border: `10px solid ${borderColour}`,
         boxSizing: 'border-box',
+        padding: 4,
         fontFamily: "'Press Start 2P', monospace",
+        boxShadow: '0 8px 32px rgba(0,0,0,0.45)',
       }}
     >
-      {/* Inner border */}
       <div
         style={{
           width: '100%',
           height: '100%',
-          border: '2px solid #2D5A1B',
+          border: `2px solid ${borderColour}`,
           boxSizing: 'border-box',
-          padding: '10px 12px',
+          padding: '8px 10px',
           display: 'flex',
           flexDirection: 'column',
-          gap: 6,
+          gap: 5,
         }}
       >
-        {/* ─── HEADER ─── */}
+        {/* ─── HEADER: stage / name / HP / type ─── */}
         <div
           style={{
-            background: hexToRgba(type1Colour, 0.25),
-            borderBottom: '1px solid #2D5A1B',
-            padding: '6px 4px 8px',
+            background: type1Colour,
+            borderRadius: 4,
+            padding: '5px 8px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            border: `1px solid ${borderColour}`,
           }}
         >
-          {/* Name + HP */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: 9, color: '#1a1a1a', letterSpacing: '-0.02em' }}>
-              {data.name.toUpperCase()}
-            </span>
-            <span style={{ fontSize: 9, color: '#1a1a1a' }}>
-              ♥ HP {data.hp}
-            </span>
-          </div>
-          {/* Stage + types */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              marginTop: 4,
-              gap: 4,
-            }}
-          >
-            <span
-              style={{
-                fontFamily: "'VT323', monospace",
-                fontSize: 13,
-                color: '#555',
-              }}
-            >
+          {/* Left: stage + name */}
+          <div>
+            <div style={{ fontSize: 5, color: headerText, opacity: 0.75, marginBottom: 2 }}>
               Basic Pokémon
-            </span>
-            <TypePill type={data.type1} />
-            {data.type2 && <TypePill type={data.type2} />}
+            </div>
+            <div style={{ fontSize: 10, color: '#1a1a1a', letterSpacing: '-0.02em' }}>
+              {data.name.toUpperCase()}
+            </div>
+          </div>
+          {/* Right: HP + type pills */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
+              <span style={{ fontSize: 16, color: '#CC0000', fontWeight: 'bold' }}>{data.hp}</span>
+              <span style={{ fontSize: 6, color: '#CC0000' }}>HP</span>
+            </div>
+            <div style={{ display: 'flex', gap: 3 }}>
+              <EnergySymbol type={data.type1} />
+              {data.type2 && <EnergySymbol type={data.type2} />}
+            </div>
           </div>
         </div>
 
         {/* ─── ILLUSTRATION BOX ─── */}
         <div
           style={{
-            border: '2px solid #2D5A1B',
-            outline: '2px solid #C8A850',
-            outlineOffset: -4,
-            background: `radial-gradient(ellipse at center, ${hexToRgba(type1Colour, 0.18)} 0%, #F5E6C8 70%)`,
-            height: 180,
+            border: `3px solid ${borderColour}`,
+            background: illoBg,
+            height: 185,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             position: 'relative',
+            // classic unlimited-print drop shadow
+            boxShadow: `5px 5px 0 ${darkenHex(type1Colour, 0.35)}`,
           }}
         >
           {spriteUrl ? (
@@ -125,20 +134,22 @@ export default function HoekemonCard({ data, spriteUrl, forCapture = false }: Ho
               src={spriteUrl}
               alt={data.name}
               style={{
-                width: 160,
-                height: 160,
+                width: '85%',
+                height: '85%',
                 objectFit: 'contain',
                 imageRendering: 'pixelated',
+                mixBlendMode: 'multiply', // white background becomes transparent
               }}
             />
           ) : (
             <div
               style={{
-                width: 160,
-                height: 160,
-                background: 'linear-gradient(90deg, #eee 25%, #ddd 50%, #eee 75%)',
+                width: 140,
+                height: 140,
+                background: 'linear-gradient(90deg, rgba(255,255,255,0.4) 25%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0.4) 75%)',
                 backgroundSize: '200% 100%',
                 animation: 'shimmer 1.5s infinite',
+                borderRadius: 4,
               }}
             />
           )}
@@ -148,79 +159,49 @@ export default function HoekemonCard({ data, spriteUrl, forCapture = false }: Ho
               bottom: 4,
               right: 8,
               fontFamily: "'VT323', monospace",
-              fontSize: 11,
+              fontSize: 12,
               fontStyle: 'italic',
-              color: '#777',
+              color: 'rgba(0,0,0,0.45)',
             }}
           >
             Illus. Prof. Oak
           </span>
         </div>
 
-        {/* ─── SPECIES BOX ─── */}
+        {/* ─── SPECIES LINE ─── */}
         <div
           style={{
-            borderTop: '1px solid #999',
-            borderBottom: '1px solid #999',
-            background: 'rgba(237,217,163,0.5)',
-            padding: '5px 4px',
+            background: 'rgba(237,217,163,0.6)',
+            borderTop: `1px solid ${borderColour}`,
+            borderBottom: `1px solid ${borderColour}`,
+            padding: '4px 6px',
           }}
         >
-          <span
-            style={{
-              fontFamily: "'VT323', monospace",
-              fontSize: 13,
-              color: '#333',
-            }}
-          >
-            {data.name}, the {data.type1} Pokémon.{' '}
-            Length: {data.height}.{' '}
-            Wt: {data.weight}.
+          <span style={{ fontFamily: "'VT323', monospace", fontSize: 13, color: '#333' }}>
+            {data.type1} Pokémon. Ht: {data.height}. Wt: {data.weight}.
+          </span>
+        </div>
+
+        {/* ─── CATCH PHRASE ─── */}
+        <div style={{ padding: '0 2px' }}>
+          <span style={{ fontFamily: "'VT323', monospace", fontSize: 13, color: '#555', fontStyle: 'italic' }}>
+            {data.catchPhrase}
           </span>
         </div>
 
         {/* ─── ATTACKS ─── */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 0, flex: 1 }}>
           {data.attacks.map((atk, i) => (
             <div key={i}>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  padding: '5px 2px',
-                  gap: 6,
-                }}
-              >
-                {/* Type circle */}
-                <div
-                  style={{
-                    width: 14,
-                    height: 14,
-                    borderRadius: '50%',
-                    background: TYPE_COLOURS[atk.type] ?? '#A8A878',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                  }}
-                >
-                  <span
-                    style={{
-                      fontFamily: "'Press Start 2P', monospace",
-                      fontSize: 4,
-                      color: TYPE_TEXT_COLOURS[atk.type] ?? '#000',
-                    }}
-                  >
-                    {atk.type[0]}
-                  </span>
-                </div>
-                {/* Name */}
+              <div style={{ display: 'flex', alignItems: 'center', padding: '4px 2px', gap: 6 }}>
+                <EnergySymbol type={atk.type} />
                 <span
                   style={{
                     fontFamily: "'Press Start 2P', monospace",
                     fontSize: 6,
                     color: '#1a1a1a',
                     flex: 1,
+                    lineHeight: 1.5,
                   }}
                 >
                   {atk.superEffective && (
@@ -228,19 +209,12 @@ export default function HoekemonCard({ data, spriteUrl, forCapture = false }: Ho
                   )}
                   {atk.name}
                 </span>
-                {/* Power */}
-                <span
-                  style={{
-                    fontFamily: "'Press Start 2P', monospace",
-                    fontSize: 6,
-                    color: '#1a1a1a',
-                  }}
-                >
+                <span style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 8, color: '#1a1a1a', fontWeight: 'bold' }}>
                   {atk.power}
                 </span>
               </div>
               {i < data.attacks.length - 1 && (
-                <div style={{ height: 1, background: '#ccc' }} />
+                <div style={{ height: 1, background: `${borderColour}44` }} />
               )}
             </div>
           ))}
@@ -250,8 +224,8 @@ export default function HoekemonCard({ data, spriteUrl, forCapture = false }: Ho
         <div
           style={{
             display: 'flex',
-            border: '1px solid #999',
-            marginTop: 2,
+            border: `1px solid ${borderColour}`,
+            background: 'rgba(0,0,0,0.04)',
           }}
         >
           {[
@@ -259,22 +233,31 @@ export default function HoekemonCard({ data, spriteUrl, forCapture = false }: Ho
               label: 'Weakness',
               value: (
                 <span style={{ fontFamily: "'VT323', monospace", fontSize: 16, color: TYPE_COLOURS[data.weakness] ?? '#C03028' }}>
-                  {data.weakness}
+                  {data.weakness} ×2
                 </span>
               ),
             },
             {
               label: 'Resistance',
-              value: (
-                <span style={{ fontFamily: "'VT323', monospace", fontSize: 16 }}>—</span>
-              ),
+              value: <span style={{ fontFamily: "'VT323', monospace", fontSize: 16 }}>—</span>,
             },
             {
-              label: 'Retreat',
+              label: 'Retreat Cost',
               value: (
-                <span style={{ fontFamily: "'VT323', monospace", fontSize: 16 }}>
-                  {'●'.repeat(Math.max(1, retreatCost))}
-                </span>
+                <div style={{ display: 'flex', gap: 2 }}>
+                  {Array.from({ length: retreatCost }).map((_, j) => (
+                    <div
+                      key={j}
+                      style={{
+                        width: 12,
+                        height: 12,
+                        borderRadius: '50%',
+                        background: '#A8A878',
+                        border: '1px solid rgba(0,0,0,0.3)',
+                      }}
+                    />
+                  ))}
+                </div>
               ),
             },
           ].map((col, i) => (
@@ -282,14 +265,14 @@ export default function HoekemonCard({ data, spriteUrl, forCapture = false }: Ho
               key={i}
               style={{
                 flex: 1,
-                padding: '4px 6px',
-                borderRight: i < 2 ? '1px solid #999' : undefined,
+                padding: '4px 5px',
+                borderRight: i < 2 ? `1px solid ${borderColour}` : undefined,
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 2,
               }}
             >
-              <span style={{ fontSize: 5, color: '#555' }}>{col.label}</span>
+              <span style={{ fontSize: 5, color: '#666' }}>{col.label}</span>
               {col.value}
             </div>
           ))}
@@ -299,9 +282,8 @@ export default function HoekemonCard({ data, spriteUrl, forCapture = false }: Ho
         <div
           style={{
             background: '#EDD9A3',
-            borderTop: '1px solid #999',
-            padding: '6px 8px',
-            flex: 1,
+            border: `1px solid ${borderColour}`,
+            padding: '5px 8px',
           }}
         >
           <span
@@ -319,20 +301,10 @@ export default function HoekemonCard({ data, spriteUrl, forCapture = false }: Ho
         </div>
 
         {/* ─── FOOTER ─── */}
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            paddingTop: 4,
-          }}
-        >
-          {['HOE-KDEX No.069', '©1999 Prof. Oak', '✦ THIRST VERSION ✦'].map(
-            (t, i) => (
-              <span key={i} style={{ fontSize: 5, color: '#888' }}>
-                {t}
-              </span>
-            )
-          )}
+        <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: 2 }}>
+          {['HOE-KDEX No.069', '©1999 Prof. Oak', '✦ THIRST VERSION ✦'].map((t, i) => (
+            <span key={i} style={{ fontSize: 5, color: '#888' }}>{t}</span>
+          ))}
         </div>
       </div>
     </div>
@@ -341,14 +313,11 @@ export default function HoekemonCard({ data, spriteUrl, forCapture = false }: Ho
   if (forCapture) return card
 
   return (
-    <div
-      style={{
-        transform: 'scale(var(--card-scale, 1))',
-      }}
-    >
+    <div style={{ transform: 'scale(var(--card-scale, 1))', transformOrigin: 'top center' }}>
       <style>{`
         :root { --card-scale: 1; }
-        @media (max-width: 520px) { :root { --card-scale: 0.85; } }
+        @media (max-width: 520px) { :root { --card-scale: 0.72; } }
+        @media (max-width: 380px) { :root { --card-scale: 0.62; } }
       `}</style>
       {card}
     </div>
