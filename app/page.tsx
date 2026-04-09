@@ -253,7 +253,6 @@ export default function Page() {
             <PokeballTable
               onSelect={() => wipeToScene('battle-loading')}
               selectedIndex={null}
-              enabled={labDialogueDone}
             />
             <OakSprite
               style={{ position: 'absolute', left: 40, bottom: 160, transform: 'none' }}
