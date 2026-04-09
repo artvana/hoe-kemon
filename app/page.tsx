@@ -7,7 +7,6 @@ import DialogueBox from '@/components/DialogueBox'
 import OakSprite from '@/components/OakSprite'
 import NameEntry from '@/components/NameEntry'
 import PokeballTable from '@/components/PokeballTable'
-import BattleScreen from '@/components/BattleScreen'
 import PokedexReveal from '@/components/PokedexReveal'
 import HoekemonCard from '@/components/HoekemonCard'
 import ShareButton from '@/components/ShareButton'
@@ -146,6 +145,13 @@ export default function Page() {
     }
     poll()
   }
+
+  // Auto-advance from loading screen once hoekemon data is ready
+  useEffect(() => {
+    if (state.scene === 'battle-loading' && state.hoekemon) {
+      wipeToScene('pokedex-species')
+    }
+  }, [state.hoekemon, state.scene]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ─── Scene renderer ─────────────────────────────────────────────────────────
 
@@ -309,10 +315,38 @@ export default function Page() {
 
       case 'battle-loading':
         return (
-          <BattleScreen
-            playerName={state.playerName}
-            onComplete={() => wipeToScene('pokedex-species')}
-          />
+          <div
+            className="screen"
+            style={{
+              background: 'var(--gb-screen-dark)',
+              flexDirection: 'column',
+              gap: 24,
+            }}
+          >
+            <div
+              style={{
+                fontFamily: "'Press Start 2P', monospace",
+                fontSize: 10,
+                color: 'var(--gb-screen-green)',
+                lineHeight: 2,
+                textAlign: 'center',
+              }}
+            >
+              <div>OAK used</div>
+              <div style={{ fontSize: 14, marginTop: 8 }}>DATA SCANNER!</div>
+            </div>
+            <div
+              style={{
+                fontFamily: "'VT323', monospace",
+                fontSize: 22,
+                color: 'var(--gb-screen-green)',
+                animation: 'blink 0.8s step-end infinite',
+                letterSpacing: 2,
+              }}
+            >
+              ANALYSING...
+            </div>
+          </div>
         )
 
       case 'pokedex-species':
