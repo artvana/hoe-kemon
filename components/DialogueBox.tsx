@@ -10,6 +10,8 @@ interface DialogueBoxProps {
   typingSpeed?: number
   onConnectClick?: () => void
   connectComplete?: boolean
+  connectLoading?: boolean
+  connectError?: string | null
 }
 
 export default function DialogueBox({
@@ -19,6 +21,8 @@ export default function DialogueBox({
   typingSpeed = 35,
   onConnectClick,
   connectComplete,
+  connectLoading,
+  connectError,
 }: DialogueBoxProps) {
   const [lineIdx, setLineIdx] = useState(0)
   const [displayed, setDisplayed] = useState('')
@@ -123,23 +127,40 @@ export default function DialogueBox({
     return (
       <div className="dialogue-box">
         {speaker && <span className="dialogue-speaker">{speaker}</span>}
-        <button
-          className="menu-option"
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            width: '100%',
-            textAlign: 'left',
-            padding: 0,
-          }}
-          onClick={(e) => {
-            e.stopPropagation()
-            onConnectClick?.()
-          }}
-        >
-          CONNECT INSTAGRAM
-        </button>
+        {connectError ? (
+          <div>
+            <div className="dialogue-text" style={{ color: 'var(--gb-red)', fontSize: 14 }}>
+              ERROR: {connectError}
+            </div>
+            <button
+              className="menu-option"
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginTop: 6 }}
+              onClick={(e) => { e.stopPropagation(); onConnectClick?.() }}
+            >
+              RETRY
+            </button>
+          </div>
+        ) : (
+          <button
+            className="menu-option"
+            disabled={connectLoading}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: connectLoading ? 'wait' : 'pointer',
+              width: '100%',
+              textAlign: 'left',
+              padding: 0,
+              opacity: connectLoading ? 0.6 : 1,
+            }}
+            onClick={(e) => {
+              e.stopPropagation()
+              onConnectClick?.()
+            }}
+          >
+            {connectLoading ? 'CONNECTING...' : 'CONNECT INSTAGRAM'}
+          </button>
+        )}
       </div>
     )
   }

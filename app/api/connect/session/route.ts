@@ -8,9 +8,21 @@ export async function POST(req: NextRequest) {
 
   try {
     const session = await createConnectSession(origin)
-    return NextResponse.json({ connectUrl: session.connectUrl })
+    // Log the raw session so we can see the actual property names
+    console.log('[ODL] Raw session response:', JSON.stringify(session))
+    // Handle both connectUrl and connect_url shapes
+    const connectUrl =
+      (session as Record<string, unknown>).connectUrl as string |
+      (session as Record<string, unknown>).connect_url as string |
+      (session as Record<string, unknown>).url as string
+    if (!connectUrl) {
+      console.error('[ODL] No connectUrl in session:', session)
+      return NextResponse.json({ error: 'No connect URL in session response', raw: session }, { status: 500 })
+    }
+    return NextResponse.json({ connectUrl })
   } catch (err) {
-    console.error('[ODL] Session creation failed:', err)
-    return NextResponse.json({ error: 'Session creation failed' }, { status: 500 })
+    const message = err instanceof Error ? err.message : String(err)
+    console.error('[ODL] Session creation failed:', message)
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }

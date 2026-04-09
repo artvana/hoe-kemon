@@ -64,6 +64,8 @@ export default function Page() {
   const [connectComplete, setConnectComplete] = useState(false)
   const [showConnectModal, setShowConnectModal] = useState(false)
   const [connectUrl, setConnectUrl] = useState<string | null>(null)
+  const [connectError, setConnectError] = useState<string | null>(null)
+  const [connectLoading, setConnectLoading] = useState(false)
   const [labDialogueDone, setLabDialogueDone] = useState(false)
 
   // Ref so the postMessage handler always has the current player name
@@ -96,14 +98,22 @@ export default function Page() {
   }
 
   async function handleConnectClick() {
+    setConnectLoading(true)
+    setConnectError(null)
     try {
       const res = await fetch('/api/connect/session', { method: 'POST' })
-      const { connectUrl: url, error } = await res.json()
-      if (error) throw new Error(error)
-      setConnectUrl(url)
+      const data = await res.json()
+      console.log('[ODL] Session API response:', data)
+      if (!res.ok || data.error) throw new Error(data.error ?? `HTTP ${res.status}`)
+      if (!data.connectUrl) throw new Error('No connect URL returned')
+      setConnectUrl(data.connectUrl)
       setShowConnectModal(true)
     } catch (err) {
-      console.error('[ODL] Failed to create session:', err)
+      const msg = err instanceof Error ? err.message : String(err)
+      console.error('[ODL] Failed to create session:', msg)
+      setConnectError(msg)
+    } finally {
+      setConnectLoading(false)
     }
   }
 
@@ -187,6 +197,8 @@ export default function Page() {
               onComplete={() => wipeToScene('lab')}
               onConnectClick={handleConnectClick}
               connectComplete={connectComplete}
+              connectLoading={connectLoading}
+              connectError={connectError}
             />
 
             {/* ODL Connect iframe overlay */}
