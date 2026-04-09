@@ -1,4 +1,12 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  transpilePackages: ['@opendatalabs/connect-js'],
+  images: {
+    remotePatterns: [
+      { hostname: 'replicate.delivery' },
+      { hostname: 'pbxt.replicate.delivery' },
+    ],
+  },
+}
 
-export default nextConfig;
+export default nextConfig

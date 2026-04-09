@@ -1,101 +1,351 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+import { useState, useEffect, useRef } from 'react'
+import { AppState, Scene } from '@/lib/types'
+import BootSequence from '@/components/BootSequence'
+import DialogueBox from '@/components/DialogueBox'
+import OakSprite from '@/components/OakSprite'
+import NameEntry from '@/components/NameEntry'
+import PokeballTable from '@/components/PokeballTable'
+import BattleScreen from '@/components/BattleScreen'
+import PokedexReveal from '@/components/PokedexReveal'
+import HoekemonCard from '@/components/HoekemonCard'
+import ShareButton from '@/components/ShareButton'
+import WipeTransition from '@/components/WipeTransition'
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+// ─── Dialogue lines ───────────────────────────────────────────────────────────
+
+const OAK_INTRO_LINES = [
+  'Hello there!',
+  'Welcome to the world of\nHOE-KEMON!',
+  'My name is OAK!\nPeople call me the\nHOE-KEMON PROF!',
+  'This world is inhabited by\ncreatures called HOE-KEMON!',
+  'For some people, they are pets.\nOthers use them for CLOUT.',
+  'Myself...\nI study HOE-KEMON as a\nprofession.',
+  'First, what is your name?',
+]
+
+const OAK_CONNECT_LINES = (name: string) => [
+  `${name.toUpperCase()}?\nThat's an interesting name.`,
+  'One moment — I need to\nverify your HOE-KEMON data.',
+]
+
+const OAK_POST_CONNECT_LINES = ['Ah yes.', 'Just as I suspected.', 'Come with me.']
+
+const OAK_LAB_LINES = (name: string) => [
+  `Right then, ${name.toUpperCase()}!`,
+  "See those Pokéballs on\nthe table?",
+  "I'd like you to take one.",
+  'Go ahead — choose.',
+]
+
+const OAK_OUTRO_LINES = (name: string) => [
+  '...',
+  'Remarkable.',
+  'I have studied HOE-KEMON\nfor 40 years.',
+  'I have never seen anything\nquite like this.',
+  `${name.toUpperCase()}'s data has been\nadded to the HOE-KDEX.`,
+  '...',
+  "Please don't show your\nmother.",
+]
+
+// ─── Page component ───────────────────────────────────────────────────────────
+
+export default function Page() {
+  const [state, setState] = useState<AppState>({
+    scene: 'boot',
+    playerName: '',
+    hoekemon: null,
+    spriteUrl: null,
+    spriteLoading: false,
+    connectionId: null,
+  })
+  const [wiping, setWiping] = useState(false)
+  const [connectComplete, setConnectComplete] = useState(false)
+  const [showConnectModal, setShowConnectModal] = useState(false)
+  const [connectUrl, setConnectUrl] = useState<string | null>(null)
+  const [labDialogueDone, setLabDialogueDone] = useState(false)
+
+  // Ref so the postMessage handler always has the current player name
+  const playerNameRef = useRef('')
+  useEffect(() => {
+    playerNameRef.current = state.playerName
+  }, [state.playerName])
+
+  // ODL Connect postMessage listener — registered once
+  useEffect(() => {
+    function handleMessage(e: MessageEvent) {
+      if (e.origin !== 'https://dashboard.opendatalabs.com') return
+      if (e.data?.type === 'success') {
+        const connectionId: string = e.data.connectionId
+        setShowConnectModal(false)
+        setConnectComplete(true)
+        beginGeneration(connectionId, playerNameRef.current)
+      }
+    }
+    window.addEventListener('message', handleMessage)
+    return () => window.removeEventListener('message', handleMessage)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  function wipeToScene(next: Scene) {
+    setWiping(true)
+    setTimeout(() => {
+      setState((s) => ({ ...s, scene: next }))
+      setWiping(false)
+    }, 700)
+  }
+
+  async function handleConnectClick() {
+    try {
+      const res = await fetch('/api/connect/session', { method: 'POST' })
+      const { connectUrl: url, error } = await res.json()
+      if (error) throw new Error(error)
+      setConnectUrl(url)
+      setShowConnectModal(true)
+    } catch (err) {
+      console.error('[ODL] Failed to create session:', err)
+    }
+  }
+
+  function beginGeneration(connectionId: string, name: string) {
+    setState((s) => ({ ...s, spriteLoading: true, connectionId }))
+    fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ connectionId, playerName: name }),
+    })
+      .then((r) => r.json())
+      .then(({ hoekemon, replicateId }) => {
+        setState((s) => ({ ...s, hoekemon }))
+        if (replicateId) pollSprite(replicateId)
+        else setState((s) => ({ ...s, spriteLoading: false }))
+      })
+      .catch((err) => {
+        console.error('[Generate] Failed:', err)
+        setState((s) => ({ ...s, spriteLoading: false }))
+      })
+  }
+
+  function pollSprite(id: string) {
+    const poll = () => {
+      fetch(`/api/sprite/${id}`)
+        .then((r) => r.json())
+        .then(({ status, url }: { status: string; url?: string }) => {
+          if (status === 'ready' && url) {
+            setState((s) => ({ ...s, spriteUrl: url, spriteLoading: false }))
+          } else if (status !== 'failed') {
+            setTimeout(poll, 2000)
+          } else {
+            setState((s) => ({ ...s, spriteLoading: false }))
+          }
+        })
+        .catch(() => setState((s) => ({ ...s, spriteLoading: false })))
+    }
+    poll()
+  }
+
+  // ─── Scene renderer ─────────────────────────────────────────────────────────
+
+  const renderScene = () => {
+    switch (state.scene) {
+      case 'boot':
+        return <BootSequence onComplete={() => wipeToScene('oak-intro')} />
+
+      case 'oak-intro':
+        return (
+          <div className="screen" style={{ background: '#F0F0F0', position: 'relative' }}>
+            <OakSprite />
+            <DialogueBox
+              speaker="OAK"
+              lines={OAK_INTRO_LINES}
+              onComplete={() => wipeToScene('name-entry')}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          </div>
+        )
+
+      case 'name-entry':
+        return (
+          <NameEntry
+            onSubmit={(name) => {
+              setState((s) => ({ ...s, playerName: name }))
+              wipeToScene('connect-instagram')
+            }}
+          />
+        )
+
+      case 'connect-instagram':
+        return (
+          <div className="screen" style={{ background: '#F0F0F0', position: 'relative' }}>
+            <OakSprite />
+            <DialogueBox
+              speaker="OAK"
+              lines={[
+                ...OAK_CONNECT_LINES(state.playerName),
+                '__CONNECT_BUTTON__',
+                ...OAK_POST_CONNECT_LINES,
+              ]}
+              onComplete={() => wipeToScene('lab')}
+              onConnectClick={handleConnectClick}
+              connectComplete={connectComplete}
+            />
+
+            {/* ODL Connect iframe overlay */}
+            {showConnectModal && connectUrl && (
+              <div
+                style={{
+                  position: 'fixed',
+                  inset: 0,
+                  background: 'rgba(0,0,0,0.88)',
+                  zIndex: 500,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div style={{ position: 'relative', width: '90%', maxWidth: 480 }}>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setShowConnectModal(false)
+                    }}
+                    style={{
+                      position: 'absolute',
+                      top: -36,
+                      right: 0,
+                      fontFamily: "'Press Start 2P', monospace",
+                      fontSize: 8,
+                      color: 'white',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    ✕ CANCEL
+                  </button>
+                  <iframe
+                    src={connectUrl}
+                    style={{ width: '100%', height: 700, border: 0, borderRadius: 8 }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )
+
+      case 'lab':
+        return (
+          <div className="screen lab-bg">
+            <div className="lab-floor-line" />
+            <div className="lab-table" />
+            <PokeballTable
+              onSelect={() => wipeToScene('battle-loading')}
+              selectedIndex={null}
+              enabled={labDialogueDone}
+            />
+            <OakSprite
+              style={{ position: 'absolute', left: 40, bottom: 160, transform: 'none' }}
+            />
+            <DialogueBox
+              speaker="OAK"
+              lines={OAK_LAB_LINES(state.playerName)}
+              onComplete={() => setLabDialogueDone(true)}
+            />
+          </div>
+        )
+
+      case 'battle-loading':
+        return (
+          <BattleScreen
+            playerName={state.playerName}
+            onComplete={() => wipeToScene('pokedex-species')}
+          />
+        )
+
+      case 'pokedex-species':
+      case 'pokedex-backstory':
+      case 'pokedex-entry':
+        return state.hoekemon ? (
+          <PokedexReveal
+            data={state.hoekemon}
+            spriteUrl={state.spriteUrl}
+            initialBeat={
+              state.scene === 'pokedex-species'
+                ? 1
+                : state.scene === 'pokedex-backstory'
+                ? 2
+                : 3
+            }
+            onComplete={() => wipeToScene('card-reveal')}
+            onBeatAdvance={(beat) => {
+              if (beat === 2) setState((s) => ({ ...s, scene: 'pokedex-backstory' }))
+              if (beat === 3) setState((s) => ({ ...s, scene: 'pokedex-entry' }))
+            }}
+          />
+        ) : (
+          <div
+            className="screen"
+            style={{
+              background: '#0a0a0a',
+              color: 'var(--gb-screen-green)',
+              fontFamily: "'VT323', monospace",
+              fontSize: 24,
+            }}
           >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+            <span style={{ animation: 'blink 0.8s step-end infinite' }}>
+              LOADING DATA...
+            </span>
+          </div>
+        )
+
+      case 'card-reveal':
+        return state.hoekemon ? (
+          <div
+            className="screen"
+            style={{
+              background: '#0a0a0a',
+              overflow: 'auto',
+              paddingBottom: 148,
+              paddingTop: 20,
+            }}
+          >
+            <div className="animate-card-reveal">
+              <HoekemonCard data={state.hoekemon} spriteUrl={state.spriteUrl} />
+            </div>
+            <DialogueBox
+              speaker="OAK"
+              lines={OAK_OUTRO_LINES(state.playerName)}
+              onComplete={() => setState((s) => ({ ...s, scene: 'oak-outro' }))}
+            />
+          </div>
+        ) : null
+
+      case 'oak-outro':
+        return state.hoekemon ? (
+          <div
+            className="screen"
+            style={{
+              background: '#0a0a0a',
+              overflow: 'auto',
+              padding: '20px 0 48px',
+              gap: 24,
+              flexDirection: 'column',
+            }}
+          >
+            <HoekemonCard data={state.hoekemon} spriteUrl={state.spriteUrl} />
+            <ShareButton hoekemon={state.hoekemon} spriteUrl={state.spriteUrl} />
+          </div>
+        ) : null
+
+      default:
+        return null
+    }
+  }
+
+  return (
+    <>
+      {renderScene()}
+      <WipeTransition active={wiping} onComplete={() => {}} />
+    </>
+  )
 }
