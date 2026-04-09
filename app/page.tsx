@@ -59,6 +59,7 @@ export default function Page() {
   const [connectUrl, setConnectUrl] = useState<string | null>(null)
   const [connectError, setConnectError] = useState<string | null>(null)
   const [connectLoading, setConnectLoading] = useState(false)
+  const [generateError, setGenerateError] = useState<string | null>(null)
 
   // Ref so the postMessage handler always has the current player name
   const playerNameRef = useRef('')
@@ -111,19 +112,26 @@ export default function Page() {
 
   function beginGeneration(connectionId: string, name: string) {
     setState((s) => ({ ...s, spriteLoading: true, connectionId }))
+    setGenerateError(null)
     fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ connectionId, playerName: name }),
     })
-      .then((r) => r.json())
+      .then(async (r) => {
+        const data = await r.json()
+        if (!r.ok || data.error) throw new Error(data.error ?? `HTTP ${r.status}`)
+        return data
+      })
       .then(({ hoekemon, replicateId }) => {
         setState((s) => ({ ...s, hoekemon }))
         if (replicateId) pollSprite(replicateId)
         else setState((s) => ({ ...s, spriteLoading: false }))
       })
       .catch((err) => {
-        console.error('[Generate] Failed:', err)
+        const msg = err instanceof Error ? err.message : String(err)
+        console.error('[Generate] Failed:', msg)
+        setGenerateError(msg)
         setState((s) => ({ ...s, spriteLoading: false }))
       })
   }
@@ -317,35 +325,80 @@ export default function Page() {
         return (
           <div
             className="screen"
-            style={{
-              background: 'var(--gb-screen-dark)',
-              flexDirection: 'column',
-              gap: 24,
-            }}
+            style={{ background: 'var(--gb-screen-dark)', flexDirection: 'column', gap: 24 }}
           >
-            <div
-              style={{
-                fontFamily: "'Press Start 2P', monospace",
-                fontSize: 10,
-                color: 'var(--gb-screen-green)',
-                lineHeight: 2,
-                textAlign: 'center',
-              }}
-            >
-              <div>OAK used</div>
-              <div style={{ fontSize: 14, marginTop: 8 }}>DATA SCANNER!</div>
-            </div>
-            <div
-              style={{
-                fontFamily: "'VT323', monospace",
-                fontSize: 22,
-                color: 'var(--gb-screen-green)',
-                animation: 'blink 0.8s step-end infinite',
-                letterSpacing: 2,
-              }}
-            >
-              ANALYSING...
-            </div>
+            {generateError ? (
+              <>
+                <div
+                  style={{
+                    fontFamily: "'Press Start 2P', monospace",
+                    fontSize: 8,
+                    color: 'var(--gb-red)',
+                    textAlign: 'center',
+                    maxWidth: 280,
+                    lineHeight: 2,
+                  }}
+                >
+                  SCAN FAILED
+                </div>
+                <div
+                  style={{
+                    fontFamily: "'VT323', monospace",
+                    fontSize: 18,
+                    color: 'var(--gb-screen-green)',
+                    textAlign: 'center',
+                    maxWidth: 300,
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {generateError}
+                </div>
+                <button
+                  onClick={() => {
+                    setGenerateError(null)
+                    beginGeneration(state.connectionId!, state.playerName)
+                  }}
+                  style={{
+                    fontFamily: "'Press Start 2P', monospace",
+                    fontSize: 8,
+                    color: 'var(--gb-screen-green)',
+                    background: 'none',
+                    border: '2px solid var(--gb-screen-green)',
+                    padding: '10px 16px',
+                    cursor: 'pointer',
+                    marginTop: 8,
+                  }}
+                >
+                  RETRY
+                </button>
+              </>
+            ) : (
+              <>
+                <div
+                  style={{
+                    fontFamily: "'Press Start 2P', monospace",
+                    fontSize: 10,
+                    color: 'var(--gb-screen-green)',
+                    lineHeight: 2,
+                    textAlign: 'center',
+                  }}
+                >
+                  <div>OAK used</div>
+                  <div style={{ fontSize: 14, marginTop: 8 }}>DATA SCANNER!</div>
+                </div>
+                <div
+                  style={{
+                    fontFamily: "'VT323', monospace",
+                    fontSize: 22,
+                    color: 'var(--gb-screen-green)',
+                    animation: 'blink 0.8s step-end infinite',
+                    letterSpacing: 2,
+                  }}
+                >
+                  ANALYSING...
+                </div>
+              </>
+            )}
           </div>
         )
 

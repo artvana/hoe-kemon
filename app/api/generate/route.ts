@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+
+export const maxDuration = 60
 import { fetchInstagramData } from '@/lib/odlClient'
 import { generateWithClaude } from '@/lib/generateHoekemon'
 import { startSpriteGeneration } from '@/lib/generateSprite'
