@@ -135,7 +135,7 @@ export default function DialogueBox({
             <button
               className="menu-option"
               style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginTop: 6 }}
-              onClick={(e) => { e.stopPropagation(); onConnectClick?.() }}
+              onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); onConnectClick?.() }}
             >
               RETRY
             </button>
@@ -155,6 +155,7 @@ export default function DialogueBox({
             }}
             onClick={(e) => {
               e.stopPropagation()
+              e.nativeEvent.stopImmediatePropagation()
               onConnectClick?.()
             }}
           >
