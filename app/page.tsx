@@ -32,12 +32,6 @@ const OAK_CONNECT_LINES = (name: string) => [
 
 const OAK_POST_CONNECT_LINES = ['Ah yes.', 'Just as I suspected.', 'Come with me.']
 
-const OAK_LAB_LINES = (name: string) => [
-  `Right then, ${name.toUpperCase()}!`,
-  "See those Pokéballs on\nthe table?",
-  "I'd like you to take one.",
-  'Go ahead — choose.',
-]
 
 const OAK_OUTRO_LINES = (name: string) => [
   '...',
@@ -256,11 +250,60 @@ export default function Page() {
             <OakSprite
               style={{ position: 'absolute', left: 40, bottom: 160, transform: 'none' }}
             />
-            <DialogueBox
-              speaker="OAK"
-              lines={OAK_LAB_LINES(state.playerName)}
-              onComplete={() => {}}
-            />
+            {/* Static prompt — no window click listener, pokeballs stay fully clickable */}
+            <div
+              style={{
+                position: 'fixed',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: 128,
+                background: 'var(--gb-cream)',
+                borderTop: '4px solid var(--gb-black)',
+                padding: '16px 20px 12px',
+                zIndex: 100,
+                pointerEvents: 'none',
+              }}
+            >
+              <span
+                style={{
+                  position: 'absolute',
+                  top: -14,
+                  left: 16,
+                  fontFamily: "'Press Start 2P', monospace",
+                  fontSize: 7,
+                  background: 'var(--gb-cream)',
+                  border: '2px solid var(--gb-black)',
+                  padding: '3px 6px',
+                  color: 'var(--gb-black)',
+                }}
+              >
+                OAK
+              </span>
+              <div
+                style={{
+                  fontFamily: "'VT323', monospace",
+                  fontSize: 22,
+                  color: 'var(--gb-black)',
+                  lineHeight: 1.5,
+                }}
+              >
+                Go ahead — choose a Pokéball!
+              </div>
+              <span
+                style={{
+                  position: 'absolute',
+                  bottom: 10,
+                  right: 14,
+                  fontFamily: "'Press Start 2P', monospace",
+                  fontSize: 8,
+                  color: 'var(--gb-black)',
+                  animation: 'blink 0.8s step-end infinite',
+                }}
+              >
+                ▲
+              </span>
+            </div>
           </div>
         )
 

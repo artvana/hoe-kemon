@@ -46,7 +46,7 @@ export default function PokeballTable({ onSelect, selectedIndex, enabled = true 
   function handleSelect(i: number) {
     if (!enabled) return
     setLocalSelected(i)
-    setTimeout(() => onSelect(i), 800)
+    setTimeout(() => onSelect(i), 450)
   }
 
   return (
