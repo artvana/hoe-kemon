@@ -17,7 +17,7 @@ export async function generateWithClaude(
         role: 'user',
         content: `Generate a HOE-KEMON for this Instagram profile. Player name: ${playerName}.
 
-Instagram data: ${JSON.stringify(instagramData)}
+Instagram data: ${JSON.stringify(instagramData).slice(0, 40000)}
 
 Rules:
 - This is a wholly original Pokémon species inspired by the user's actual Instagram presence
