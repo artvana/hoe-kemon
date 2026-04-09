@@ -66,7 +66,6 @@ export default function Page() {
   const [connectUrl, setConnectUrl] = useState<string | null>(null)
   const [connectError, setConnectError] = useState<string | null>(null)
   const [connectLoading, setConnectLoading] = useState(false)
-  const [labDialogueDone, setLabDialogueDone] = useState(false)
 
   // Ref so the postMessage handler always has the current player name
   const playerNameRef = useRef('')
@@ -260,7 +259,7 @@ export default function Page() {
             <DialogueBox
               speaker="OAK"
               lines={OAK_LAB_LINES(state.playerName)}
-              onComplete={() => setLabDialogueDone(true)}
+              onComplete={() => {}}
             />
           </div>
         )
