@@ -26,8 +26,9 @@ export async function POST(req: NextRequest) {
   try {
     hoekemon = await generateWithClaude(instagramData, playerName)
   } catch (err) {
-    console.error('[Claude] Generation failed:', err)
-    return NextResponse.json({ error: 'Hoekemon generation failed' }, { status: 500 })
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error('[Claude] Generation failed:', msg)
+    return NextResponse.json({ error: `Hoekemon generation failed: ${msg}` }, { status: 500 })
   }
 
   // 3. Start sprite generation (non-blocking — we return the ID for polling)

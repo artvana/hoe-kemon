@@ -63,10 +63,26 @@ Return ONLY this JSON shape, nothing else:
 
   const text =
     response.content[0].type === 'text' ? response.content[0].text : ''
-  const parsed = JSON.parse(text.replace(/```json|```/g, '').trim())
+
+  // Strip markdown fences then find the JSON object
+  const cleaned = text.replace(/```json|```/g, '').trim()
+  const jsonStart = cleaned.indexOf('{')
+  const jsonEnd = cleaned.lastIndexOf('}')
+  if (jsonStart === -1 || jsonEnd === -1) {
+    console.error('[Claude] No JSON object in response:', cleaned.slice(0, 500))
+    throw new Error(`Claude returned no JSON. Raw: ${cleaned.slice(0, 200)}`)
+  }
+
+  let parsed: HoekemonData
+  try {
+    parsed = JSON.parse(cleaned.slice(jsonStart, jsonEnd + 1))
+  } catch (e) {
+    console.error('[Claude] JSON parse failed. Raw text:', cleaned.slice(0, 500))
+    throw new Error(`JSON parse error: ${e instanceof Error ? e.message : e}`)
+  }
 
   // Enforce the joke
   if (parsed.hp % 10 !== 9) parsed.hp = 69
 
-  return parsed as HoekemonData
+  return parsed
 }
