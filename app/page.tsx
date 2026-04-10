@@ -18,7 +18,7 @@ const OAK_INTRO_LINES = [
   'Welcome to the world of\nHOE-KEMON!',
   'My name is OAK!\nPeople call me the\nHOE-KEMON PROF!',
   'This world is inhabited by\ncreatures called HOE-KEMON!',
-  'Some trainers battle with them.\nOthers use them to out-hoe\nevery basic in the region.',
+  'Some trainers battle with them. Others use them to out-hoe every basic in the region.',
   'Myself...\nI study HOE-KEMON as a\nprofession.',
   'First, what is your name?',
 ]
