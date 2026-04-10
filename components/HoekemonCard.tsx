@@ -163,8 +163,11 @@ export default function HoekemonCard({ data, spriteUrl, forCapture = false }: Ho
             overflow: 'hidden',
           }}>
             {spriteUrl ? (
+              // Proxy through Next.js API to avoid CORS issues with Replicate URLs
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={spriteUrl} alt={data.name}
+              <img
+                src={`/api/sprite/image?url=${encodeURIComponent(spriteUrl)}`}
+                alt={data.name}
                 style={{ width: '94%', height: '94%', objectFit: 'contain', mixBlendMode: 'multiply' }}
               />
             ) : (

@@ -33,7 +33,7 @@
 html, body {
   width: 100%;
   height: 100%;
-  background: #F0EFE7;
+  background: #1a1a2e;
   font-family: var(--font-press-start), 'Press Start 2P', monospace;
   cursor: default;
   overflow: hidden;
@@ -41,7 +41,7 @@ html, body {
 
 /* ─── DIALOGUE BOX ─── */
 .dialogue-box {
-  position: fixed;
+  position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
@@ -225,13 +225,28 @@ html, body {
 }
 
 /* ─── SCREEN CONTAINER ─── */
+/* Scenes live inside .gb-display (position: relative), so use absolute */
 .screen {
-  position: fixed;
+  position: absolute;
   inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+/* Card scenes break out of the GB shell into a full-screen wrapper */
+.screen-card-outer {
+  position: fixed;
+  inset: 0;
+  background: #1a1a2e;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  overflow: auto;
+  padding: 24px 0 48px;
 }
 
 /* ─── OAK LAB ─── */
@@ -353,9 +368,10 @@ html, body {
 }
 
 @keyframes card-reveal {
-  0% { transform: translateY(100vh); }
-  70% { transform: translateY(-20px); }
-  100% { transform: translateY(0); }
+  0% { transform: scale(0.08) translateY(60px); opacity: 0; }
+  30% { opacity: 1; }
+  80% { transform: scale(1.04) translateY(-6px); }
+  100% { transform: scale(1) translateY(0); }
 }
 
 @keyframes silhouette-pulse {

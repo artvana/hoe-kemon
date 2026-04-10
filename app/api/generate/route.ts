@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
   // 3. Start sprite generation (non-blocking — we return the ID for polling)
   let replicateId: string | null = null
   try {
-    replicateId = await startSpriteGeneration(hoekemon.visualDescription)
+    replicateId = await startSpriteGeneration(hoekemon.visualDescription, hoekemon.name, hoekemon.type1)
   } catch (err) {
     console.error('[Replicate] Sprite generation failed to start:', err)
     // Non-fatal — card renders with shimmer placeholder

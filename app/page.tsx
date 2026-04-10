@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { AppState, Scene } from '@/lib/types'
+import Gameboy from '@/components/Gameboy'
 import BootSequence from '@/components/BootSequence'
 import DialogueBox from '@/components/DialogueBox'
 import NameEntry from '@/components/NameEntry'
@@ -29,7 +30,6 @@ const OAK_CONNECT_LINES = (name: string) => [
 
 const OAK_POST_CONNECT_LINES = ['Ah yes.', 'Just as I suspected.', 'Come with me.']
 
-
 const OAK_OUTRO_LINES = (name: string) => [
   '...',
   'Remarkable.',
@@ -39,6 +39,9 @@ const OAK_OUTRO_LINES = (name: string) => [
   '...',
   "Please don't show your\nmother.",
 ]
+
+// ─── Card scenes (break out of GameBoy shell) ─────────────────────────────────
+const CARD_SCENES: Scene[] = ['card-reveal', 'oak-outro']
 
 // ─── Page component ───────────────────────────────────────────────────────────
 
@@ -59,13 +62,12 @@ export default function Page() {
   const [connectLoading, setConnectLoading] = useState(false)
   const [generateError, setGenerateError] = useState<string | null>(null)
 
-  // Ref so the postMessage handler always has the current player name
   const playerNameRef = useRef('')
   useEffect(() => {
     playerNameRef.current = state.playerName
   }, [state.playerName])
 
-  // ODL Connect postMessage listener — registered once
+  // ODL Connect postMessage listener
   useEffect(() => {
     function handleMessage(e: MessageEvent) {
       if (e.origin !== 'https://dashboard.opendatalabs.com') return
@@ -94,14 +96,12 @@ export default function Page() {
     try {
       const res = await fetch('/api/connect/session', { method: 'POST' })
       const data = await res.json()
-      console.log('[ODL] Session API response:', data)
       if (!res.ok || data.error) throw new Error(data.error ?? `HTTP ${res.status}`)
       if (!data.connectUrl) throw new Error('No connect URL returned')
       setConnectUrl(data.connectUrl)
       setShowConnectModal(true)
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err)
-      console.error('[ODL] Failed to create session:', msg)
       setConnectError(msg)
     } finally {
       setConnectLoading(false)
@@ -128,7 +128,6 @@ export default function Page() {
       })
       .catch((err) => {
         const msg = err instanceof Error ? err.message : String(err)
-        console.error('[Generate] Failed:', msg)
         setGenerateError(msg)
         setState((s) => ({ ...s, spriteLoading: false }))
       })
@@ -152,7 +151,7 @@ export default function Page() {
     poll()
   }
 
-  // Auto-advance from loading screen once hoekemon data is ready
+  // Auto-advance from loading once hoekemon data is ready
   useEffect(() => {
     if (state.scene === 'battle-loading' && state.hoekemon) {
       wipeToScene('pokedex-species')
@@ -160,34 +159,35 @@ export default function Page() {
   }, [state.hoekemon, state.scene]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ─── Scene renderer ─────────────────────────────────────────────────────────
-
   const renderScene = () => {
     switch (state.scene) {
+      // ── Boot sequence ──────────────────────────────────────────────────────
       case 'boot':
         return <BootSequence onComplete={() => wipeToScene('oak-intro')} />
 
+      // ── Oak intro: sprite fills GameBoy display, dialogue pinned to bottom ──
       case 'oak-intro':
         return (
-          // GBFrame: 10:9 container matching frame_011 aspect ratio perfectly
-          <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000' }}>
-            <div style={{
-              position: 'relative',
-              width: 'min(100vw, calc(100vh * 400 / 360))',
-              height: 'min(100vh, calc(100vw * 360 / 400))',
-              overflow: 'hidden',
-            }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/frames/frame_011.jpg" alt="" style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'fill' }} />
-              <DialogueBox
-                speaker="OAK"
-                lines={OAK_INTRO_LINES}
-                onComplete={() => wipeToScene('name-entry')}
-                position="absolute"
-              />
-            </div>
+          <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', background: '#F0EFE7' }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/frames/frame_011.jpg"
+              alt=""
+              style={{
+                position: 'absolute', inset: 0,
+                width: '100%', height: '100%',
+                objectFit: 'cover', objectPosition: 'top center',
+              }}
+            />
+            <DialogueBox
+              speaker="OAK"
+              lines={OAK_INTRO_LINES}
+              onComplete={() => wipeToScene('name-entry')}
+            />
           </div>
         )
 
+      // ── Name entry ─────────────────────────────────────────────────────────
       case 'name-entry':
         return (
           <NameEntry
@@ -198,44 +198,42 @@ export default function Page() {
           />
         )
 
+      // ── Connect Instagram: same Oak sprite, dialogue advances after connect ──
       case 'connect-instagram':
         return (
-          <>
-            {/* GBFrame with frame_011 — same Oak scene bg */}
-            <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000' }}>
-              <div style={{
-                position: 'relative',
-                width: 'min(100vw, calc(100vh * 400 / 360))',
-                height: 'min(100vh, calc(100vw * 360 / 400))',
-                overflow: 'hidden',
-              }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/frames/frame_011.jpg" alt="" style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'fill' }} />
-                <DialogueBox
-                  speaker="OAK"
-                  lines={[
-                    ...OAK_CONNECT_LINES(state.playerName),
-                    '__CONNECT_BUTTON__',
-                    ...OAK_POST_CONNECT_LINES,
-                  ]}
-                  onComplete={() => wipeToScene('lab')}
-                  onConnectClick={handleConnectClick}
-                  connectComplete={connectComplete}
-                  connectLoading={connectLoading}
-                  connectError={connectError}
-                  position="absolute"
-                />
-              </div>
-            </div>
+          <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', background: '#F0EFE7' }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/frames/frame_011.jpg"
+              alt=""
+              style={{
+                position: 'absolute', inset: 0,
+                width: '100%', height: '100%',
+                objectFit: 'cover', objectPosition: 'top center',
+              }}
+            />
+            <DialogueBox
+              speaker="OAK"
+              lines={[
+                ...OAK_CONNECT_LINES(state.playerName),
+                '__CONNECT_BUTTON__',
+                ...OAK_POST_CONNECT_LINES,
+              ]}
+              onComplete={() => wipeToScene('lab')}
+              onConnectClick={handleConnectClick}
+              connectComplete={connectComplete}
+              connectLoading={connectLoading}
+              connectError={connectError}
+            />
 
-            {/* ODL Connect iframe overlay — fixed over everything */}
+            {/* ODL iframe — rendered outside GameBoy, covers full viewport */}
             {showConnectModal && connectUrl && (
               <div
                 style={{
                   position: 'fixed',
                   inset: 0,
                   background: 'rgba(0,0,0,0.88)',
-                  zIndex: 500,
+                  zIndex: 9999,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -244,20 +242,11 @@ export default function Page() {
               >
                 <div style={{ position: 'relative', width: '90%', maxWidth: 480 }}>
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setShowConnectModal(false)
-                    }}
+                    onClick={(e) => { e.stopPropagation(); setShowConnectModal(false) }}
                     style={{
-                      position: 'absolute',
-                      top: -36,
-                      right: 0,
-                      fontFamily: "'Press Start 2P', monospace",
-                      fontSize: 8,
-                      color: 'white',
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
+                      position: 'absolute', top: -36, right: 0,
+                      fontFamily: "'Press Start 2P', monospace", fontSize: 8,
+                      color: 'white', background: 'none', border: 'none', cursor: 'pointer',
                     }}
                   >
                     ✕ CANCEL
@@ -269,91 +258,78 @@ export default function Page() {
                 </div>
               </div>
             )}
-          </>
+          </div>
         )
 
+      // ── Lab — top-down lab with pokeball hotspots ──────────────────────────
       case 'lab':
-        // GBFrame with frame_097 — authentic Gen 1 lab scene
-        // Pokeball hotspots positioned at exact image coordinates (percentage of 400×360 frame)
-        // Left ball ≈ (41%, 47%), Middle ≈ (53%, 45%), Right ≈ (64%, 44%)
         return (
-          <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000' }}>
-            <div style={{
-              position: 'relative',
-              width: 'min(100vw, calc(100vh * 400 / 360))',
-              height: 'min(100vh, calc(100vw * 360 / 400))',
-              overflow: 'hidden',
-            }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/frames/frame_097.jpg" alt="" style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'fill' }} />
+          <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', background: '#F0EFE7' }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/frames/frame_097.jpg"
+              alt=""
+              style={{
+                position: 'absolute', inset: 0,
+                width: '100%', height: '100%',
+                objectFit: 'cover', objectPosition: 'top center',
+              }}
+            />
 
-              {/* Pokeball click hotspots — invisible, positioned over image pokeballs */}
-              {[
-                { left: '35%', top: '41%' },
-                { left: '47%', top: '39%' },
-                { left: '59%', top: '38%' },
-              ].map((pos, i) => (
-                <div
-                  key={i}
-                  onClick={() => wipeToScene('battle-loading')}
-                  style={{
-                    position: 'absolute',
-                    ...pos,
-                    width: '12%',
-                    height: '14%',
-                    cursor: 'pointer',
-                    // Subtle hover highlight
-                    borderRadius: '50%',
-                  }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.2)' }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.background = 'transparent' }}
-                />
-              ))}
+            {/* Pokeball hotspots — positions adjusted for object-fit:cover crop */}
+            {[
+              { left: '36%', top: '46%' },
+              { left: '52%', top: '44%' },
+              { left: '68%', top: '43%' },
+            ].map((pos, i) => (
+              <div
+                key={i}
+                onClick={() => wipeToScene('battle-loading')}
+                style={{
+                  position: 'absolute', ...pos,
+                  width: '14%', height: '9%',
+                  cursor: 'pointer', borderRadius: '50%',
+                  zIndex: 2,
+                }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.25)' }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.background = 'transparent' }}
+              />
+            ))}
 
-              {/* Dialogue box — sits over image's dialogue box area (bottom ~31% of frame) */}
-              <div style={{
-                position: 'absolute',
-                bottom: 0, left: 0, right: 0,
-                height: '32%',
+            {/* Dialogue box pinned to bottom, overlaps image */}
+            <div
+              style={{
+                position: 'absolute', bottom: 0, left: 0, right: 0,
+                height: '30%',
                 background: 'var(--gb-cream)',
                 borderTop: '3px solid var(--gb-black)',
                 boxShadow: 'inset 0 0 0 3px var(--gb-cream), inset 0 0 0 5px var(--gb-black)',
-                padding: '3% 5% 2%',
-                pointerEvents: 'none',
+                padding: '8% 5% 4%',
+                zIndex: 3,
+              }}
+            >
+              <span style={{
+                position: 'absolute', top: -14, left: '4%',
+                fontFamily: "'Press Start 2P', monospace", fontSize: 7,
+                background: 'var(--gb-cream)', border: '2px solid var(--gb-black)',
+                padding: '3px 6px', color: 'var(--gb-black)',
+              }}>OAK</span>
+              <div style={{
+                fontFamily: "'VT323', monospace", fontSize: 20,
+                color: 'var(--gb-black)', lineHeight: 1.4,
               }}>
-                <span style={{
-                  position: 'absolute',
-                  top: -14,
-                  left: '4%',
-                  fontFamily: "'Press Start 2P', monospace",
-                  fontSize: 'max(5px, 1.4vw)',
-                  background: 'var(--gb-cream)',
-                  border: '2px solid var(--gb-black)',
-                  padding: '3px 6px',
-                  color: 'var(--gb-black)',
-                }}>OAK</span>
-                <div style={{
-                  fontFamily: "'VT323', monospace",
-                  fontSize: 'max(18px, 4.5vw)',
-                  color: 'var(--gb-black)',
-                  lineHeight: 1.4,
-                }}>
-                  Go ahead — choose a HOE-KÉBALL!
-                </div>
-                <span style={{
-                  position: 'absolute',
-                  bottom: '8%',
-                  right: '4%',
-                  fontFamily: "'Press Start 2P', monospace",
-                  fontSize: 'max(6px, 1.5vw)',
-                  color: 'var(--gb-black)',
-                  animation: 'blink 0.8s step-end infinite',
-                }}>▲</span>
+                Go ahead — choose a HOE-KÉBALL!
               </div>
+              <span style={{
+                position: 'absolute', bottom: '8%', right: '4%',
+                fontFamily: "'Press Start 2P', monospace", fontSize: 8,
+                color: 'var(--gb-black)', animation: 'blink 0.8s step-end infinite',
+              }}>▲</span>
             </div>
           </div>
         )
 
+      // ── Battle loading / scanning ──────────────────────────────────────────
       case 'battle-loading':
         return (
           <div
@@ -362,28 +338,16 @@ export default function Page() {
           >
             {generateError ? (
               <>
-                <div
-                  style={{
-                    fontFamily: "'Press Start 2P', monospace",
-                    fontSize: 8,
-                    color: '#CC0000',
-                    textAlign: 'center',
-                    maxWidth: 280,
-                    lineHeight: 2,
-                  }}
-                >
+                <div style={{
+                  fontFamily: "'Press Start 2P', monospace", fontSize: 8,
+                  color: '#CC0000', textAlign: 'center', maxWidth: 280, lineHeight: 2,
+                }}>
                   SCAN FAILED
                 </div>
-                <div
-                  style={{
-                    fontFamily: "'VT323', monospace",
-                    fontSize: 18,
-                    color: '#000',
-                    textAlign: 'center',
-                    maxWidth: 300,
-                    lineHeight: 1.4,
-                  }}
-                >
+                <div style={{
+                  fontFamily: "'VT323', monospace", fontSize: 18,
+                  color: '#000', textAlign: 'center', maxWidth: 300, lineHeight: 1.4,
+                }}>
                   {generateError}
                 </div>
                 <button
@@ -392,14 +356,9 @@ export default function Page() {
                     beginGeneration(state.connectionId!, state.playerName)
                   }}
                   style={{
-                    fontFamily: "'Press Start 2P', monospace",
-                    fontSize: 8,
-                    color: '#000',
-                    background: 'none',
-                    border: '2px solid #000',
-                    padding: '10px 16px',
-                    cursor: 'pointer',
-                    marginTop: 8,
+                    fontFamily: "'Press Start 2P', monospace", fontSize: 8,
+                    color: '#000', background: 'none', border: '2px solid #000',
+                    padding: '10px 16px', cursor: 'pointer', marginTop: 8,
                   }}
                 >
                   RETRY
@@ -407,27 +366,17 @@ export default function Page() {
               </>
             ) : (
               <>
-                <div
-                  style={{
-                    fontFamily: "'Press Start 2P', monospace",
-                    fontSize: 10,
-                    color: '#000',
-                    lineHeight: 2,
-                    textAlign: 'center',
-                  }}
-                >
+                <div style={{
+                  fontFamily: "'Press Start 2P', monospace", fontSize: 9,
+                  color: '#000', lineHeight: 2, textAlign: 'center',
+                }}>
                   <div>OAK used</div>
-                  <div style={{ fontSize: 14, marginTop: 8 }}>DATA SCANNER!</div>
+                  <div style={{ fontSize: 12, marginTop: 8 }}>DATA SCANNER!</div>
                 </div>
-                <div
-                  style={{
-                    fontFamily: "'VT323', monospace",
-                    fontSize: 22,
-                    color: '#000',
-                    animation: 'blink 0.8s step-end infinite',
-                    letterSpacing: 2,
-                  }}
-                >
+                <div style={{
+                  fontFamily: "'VT323', monospace", fontSize: 20,
+                  color: '#000', animation: 'blink 0.8s step-end infinite', letterSpacing: 2,
+                }}>
                   ANALYSING...
                 </div>
               </>
@@ -435,6 +384,7 @@ export default function Page() {
           </div>
         )
 
+      // ── Pokédex reveal ─────────────────────────────────────────────────────
       case 'pokedex-species':
       case 'pokedex-backstory':
       case 'pokedex-entry':
@@ -443,11 +393,8 @@ export default function Page() {
             data={state.hoekemon}
             spriteUrl={state.spriteUrl}
             initialBeat={
-              state.scene === 'pokedex-species'
-                ? 1
-                : state.scene === 'pokedex-backstory'
-                ? 2
-                : 3
+              state.scene === 'pokedex-species' ? 1
+              : state.scene === 'pokedex-backstory' ? 2 : 3
             }
             onComplete={() => wipeToScene('card-reveal')}
             onBeatAdvance={(beat) => {
@@ -456,58 +403,39 @@ export default function Page() {
             }}
           />
         ) : (
-          <div
-            className="screen"
-            style={{
-              background: '#F0EFE7',
-              color: '#000',
-              fontFamily: "'VT323', monospace",
-              fontSize: 24,
-            }}
-          >
-            <span style={{ animation: 'blink 0.8s step-end infinite' }}>
-              LOADING DATA...
-            </span>
+          <div className="screen" style={{
+            background: '#F0EFE7', color: '#000',
+            fontFamily: "'VT323', monospace", fontSize: 22,
+          }}>
+            <span style={{ animation: 'blink 0.8s step-end infinite' }}>LOADING DATA...</span>
           </div>
         )
 
+      // ── Card reveal — BREAKS OUT of GameBoy shell ──────────────────────────
+      // screen-card-outer is position: fixed; children here flow normally
       case 'card-reveal':
         return state.hoekemon ? (
-          <div
-            className="screen"
-            style={{
-              background: '#F0EFE7',
-              overflow: 'auto',
-              paddingBottom: 148,
-              paddingTop: 20,
-            }}
-          >
-            <div className="animate-card-reveal">
+          <>
+            <div className="animate-card-reveal" style={{ position: 'relative' }}>
               <HoekemonCard data={state.hoekemon} spriteUrl={state.spriteUrl} />
+              {/* Dialogue pinned to bottom of card */}
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0 }}>
+                <DialogueBox
+                  speaker="OAK"
+                  lines={OAK_OUTRO_LINES(state.playerName)}
+                  onComplete={() => setState((s) => ({ ...s, scene: 'oak-outro' }))}
+                />
+              </div>
             </div>
-            <DialogueBox
-              speaker="OAK"
-              lines={OAK_OUTRO_LINES(state.playerName)}
-              onComplete={() => setState((s) => ({ ...s, scene: 'oak-outro' }))}
-            />
-          </div>
+          </>
         ) : null
 
       case 'oak-outro':
         return state.hoekemon ? (
-          <div
-            className="screen"
-            style={{
-              background: '#F0EFE7',
-              overflow: 'auto',
-              padding: '20px 0 48px',
-              gap: 24,
-              flexDirection: 'column',
-            }}
-          >
+          <>
             <HoekemonCard data={state.hoekemon} spriteUrl={state.spriteUrl} />
             <ShareButton hoekemon={state.hoekemon} spriteUrl={state.spriteUrl} />
-          </div>
+          </>
         ) : null
 
       default:
@@ -515,10 +443,27 @@ export default function Page() {
     }
   }
 
+  const isCardScene = CARD_SCENES.includes(state.scene)
+
+  // Card scenes break out of the GameBoy shell entirely
+  if (isCardScene) {
+    return (
+      <>
+        <div className="screen-card-outer">
+          {renderScene()}
+        </div>
+        {/* Wipe covers full viewport for the GB→card transition */}
+        <WipeTransition active={wiping} onComplete={() => {}} />
+      </>
+    )
+  }
+
   return (
     <>
-      {renderScene()}
-      <WipeTransition active={wiping} onComplete={() => {}} />
+      <Gameboy>
+        {renderScene()}
+        <WipeTransition active={wiping} onComplete={() => {}} />
+      </Gameboy>
     </>
   )
 }

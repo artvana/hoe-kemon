@@ -1,0 +1,433 @@
+/* ── Outer wrapper — fills viewport, dark bg on desktop ────────────────────── */
+.gameboy-outer {
+  position: fixed;
+  inset: 0;
+  background: #4f50db; /* shell colour on mobile (no gap) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 640px) {
+  .gameboy-outer {
+    background: #1a1a2e; /* near-black on desktop */
+  }
+}
+
+/* ── GB shell ───────────────────────────────────────────────────────────────── */
+.gameboy {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* Mobile: fill the outer wrapper (= fill viewport) */
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  padding: 18px 16px 12px;
+  background-color: #4f50db;
+  box-shadow: 0px -5px 0px #0d0e51, 0px 5px 0px #3d38b5;
+  font-family: sans-serif;
+  -webkit-user-select: none;
+  cursor: default;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Curved bottom-right — mobile only */
+.gameboy::after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: calc(100% - 34px);
+  left: 5px;
+  width: calc(100% - 10px);
+  height: 50px;
+  border-radius: 50%;
+  background-color: #4f50db;
+  box-shadow: 0px 5px 0px #3d38b5;
+  border-bottom: 2px solid #9998eb;
+  z-index: 0;
+}
+
+/* Desktop: fixed size, centered */
+@media (min-width: 640px) {
+  .gameboy {
+    width: 360px;
+    height: 640px;
+    flex-shrink: 0;
+  }
+  .gameboy::after {
+    display: none;
+  }
+}
+
+/* ── Display section (top half) ─────────────────────────────────────────────── */
+.gameboy .display-section {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* ── Screen area (dark bezel) ────────────────────────────────────────────────── */
+.gameboy .screen-area {
+  position: relative;
+  flex: 1;
+  padding: 32px 36px 6px 48px; /* extra left for power indicator */
+  border-radius: 15px 15px 15px 15px;
+  background-color: #23252d;
+  color: #67879a;
+  box-shadow: 0px 2px 0px black, 0px -2px 0px black, -2px 0px 0px black,
+    2px 0px 0px black;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+.gameboy .screen-area::after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: calc(100% - 20px);
+  left: 5px;
+  width: calc(100% - 10px);
+  height: 30px;
+  border-radius: 50%;
+  background-color: #23252d;
+  box-shadow: 0px 2px 0px black;
+}
+
+/* Power indicator */
+.gameboy .screen-area .power {
+  position: absolute;
+  display: block;
+  width: 48px;
+  left: 0px;
+  top: 33%;
+  font-size: 9px;
+  color: #67879a;
+  letter-spacing: -0.5px;
+  text-align: center;
+}
+
+.gameboy .screen-area .power .indicator {
+  line-height: 14px;
+}
+
+.gameboy .screen-area .power .indicator .led {
+  position: relative;
+  display: inline-block;
+  background-color: #ca1a21;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: 0px 0px 10px #ff552e;
+  z-index: 5;
+}
+
+.gameboy .screen-area .power .indicator .arc {
+  position: relative;
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-left: -2px;
+}
+
+.gameboy .screen-area .power .indicator .arc::before {
+  position: absolute;
+  left: 3px;
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #67879a;
+}
+
+.gameboy .screen-area .power .indicator .arc::after {
+  position: absolute;
+  left: 0px;
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #23252d;
+}
+
+/* ── The game screen itself ──────────────────────────────────────────────────── */
+.gameboy .screen-area .display {
+  position: relative;
+  background-color: black;
+  /* KEY CHANGE: flex:1 so screen fills all available height */
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  border-radius: 3px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+/* Label — GAME BOY */
+.gameboy .screen-area .label {
+  position: relative;
+  text-align: center;
+  font-size: 18px;
+  z-index: 5;
+  flex-shrink: 0;
+}
+
+.gameboy .screen-area .label .title {
+  display: inline;
+  font-weight: bold;
+  font-style: italic;
+  color: #67879a;
+  font-size: 18px;
+  margin-right: 5px;
+}
+
+.gameboy .screen-area .label .subtitle {
+  display: inline;
+  font-family: "Comic Sans MS", cursive;
+  font-weight: bold;
+  font-size: 20px;
+  letter-spacing: -1px;
+}
+
+.gameboy .screen-area .label .subtitle .c { display: inline-block; color: #aa2058; font-size: 20px; }
+.gameboy .screen-area .label .subtitle .o1 { display: inline-block; color: #605bd9; font-size: 18px; }
+.gameboy .screen-area .label .subtitle .l { display: inline-block; color: #78b930; font-size: 20px; transform: rotateZ(-10deg); }
+.gameboy .screen-area .label .subtitle .o2 { display: inline-block; color: #b6b524; font-size: 18px; }
+.gameboy .screen-area .label .subtitle .r { display: inline-block; color: #317aaf; font-size: 20px; }
+
+/* Nintendo badge */
+.gameboy .nintendo {
+  padding: 0px 4px;
+  width: 78px;
+  color: #3436bf;
+  font-weight: bold;
+  text-align: center;
+  margin: 0 auto;
+  border: 2px solid #3436bf;
+  border-radius: 10px;
+  margin-top: 22px;
+  text-shadow: 0px -2px 1px #6b67ed;
+  box-shadow: 0px -2px 1px #6b67ed;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* ── Control section (bottom half — mobile only) ─────────────────────────────── */
+.gameboy .control-section {
+  width: 100%;
+  flex-shrink: 0;
+  height: 185px;
+}
+
+@media (min-width: 640px) {
+  .gameboy .control-section {
+    display: none;
+  }
+}
+
+.gameboy .controls {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0 0;
+}
+
+/* D-pad */
+.gameboy .controls .dpad {
+  position: relative;
+  display: inline-block;
+  width: 88px;
+  height: 88px;
+  z-index: 5;
+}
+
+.gameboy .controls .dpad > * {
+  width: 33%;
+  height: 33%;
+  position: absolute;
+  background-color: #565e6a;
+  cursor: pointer;
+}
+
+.gameboy .controls .dpad > * i {
+  position: relative;
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+  height: 100%;
+  font-size: 22px;
+  color: #333a4a;
+  text-shadow: 0px -0.5px 0px #aaa;
+  line-height: 200%;
+}
+
+.gameboy .controls .dpad .up {
+  top: calc(0% + 4px);
+  left: 33%;
+  border-top: 4px solid black;
+  border-left: 4px solid black;
+  border-right: 4px solid black;
+  border-radius: 5px 5px 0px 0px;
+}
+.gameboy .controls .dpad .up:active { background: linear-gradient(to top, #565e6a 0%, #333 100%); }
+
+.gameboy .controls .dpad .right {
+  top: 33%;
+  left: calc(66% - 4px);
+  border-top: 4px solid black;
+  border-bottom: 4px solid black;
+  border-right: 4px solid black;
+  border-radius: 0px 5px 5px 0px;
+  box-shadow: 0px -2px 0px #888 inset;
+}
+.gameboy .controls .dpad .right:active { background: linear-gradient(to right, #565e6a 0%, #333 100%); }
+
+.gameboy .controls .dpad .down {
+  top: calc(66% - 4px);
+  left: 33%;
+  border-left: 4px solid black;
+  border-bottom: 4px solid black;
+  border-right: 4px solid black;
+  border-radius: 0px 0px 5px 5px;
+  box-shadow: 0px -2px 0px #888 inset;
+}
+.gameboy .controls .dpad .down:active { background: linear-gradient(to bottom, #565e6a 0%, #333 100%); }
+
+.gameboy .controls .dpad .left {
+  top: 33%;
+  left: calc(0% + 4px);
+  border-top: 4px solid black;
+  border-bottom: 4px solid black;
+  border-left: 4px solid black;
+  border-radius: 5px 0px 0px 5px;
+  box-shadow: 0px -2px 0px #888 inset;
+}
+.gameboy .controls .dpad .left:active { background: linear-gradient(to left, #565e6a 0%, #333 100%); }
+
+.gameboy .controls .dpad .middle {
+  top: 33%;
+  left: 33%;
+  z-index: -5;
+}
+.gameboy .controls .dpad .middle::after {
+  content: "";
+  position: absolute;
+  top: 20%; left: 20%;
+  display: inline-block;
+  border: 1px solid #6e737a;
+  background: linear-gradient(to bottom, #6d7075 0%, #6d7075 30%, #23272f 70%, #23272f 100%);
+  border-radius: 50%;
+  height: 60%;
+  width: 60%;
+}
+
+/* A / B buttons */
+.gameboy .controls .a-b {
+  position: relative;
+  display: inline-block;
+  width: 116px;
+  height: 88px;
+}
+
+.gameboy .controls .a-b .a,
+.gameboy .controls .a-b .b {
+  position: absolute;
+  display: inline-block;
+  font-size: 20px;
+  width: 38px;
+  height: 38px;
+  line-height: 38px;
+  border-radius: 50%;
+  background-color: #2c313e;
+  border-bottom: 2px solid #888;
+  box-shadow: -1px 1px 5px black, 0px 0px 5px black inset;
+  text-shadow: 0px -1px 1px #888;
+  color: #2c313e;
+  text-align: center;
+  cursor: pointer;
+  transition: box-shadow 0.1s ease-out, border 0.1s ease-out, line-height 0.2s ease-out;
+}
+.gameboy .controls .a-b .a:active,
+.gameboy .controls .a-b .b:active {
+  box-shadow: -1px 1px 1px black, 0px 0px 5px black inset;
+  border-width: 0px;
+  line-height: 43px;
+}
+
+.gameboy .controls .a-b .a { top: 12px; right: 8px; }
+.gameboy .controls .a-b .b { top: 32px; left: 0%; }
+
+/* Start / Select */
+.gameboy .start-select {
+  width: 100%;
+  height: 55px;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
+.gameboy .start-select .select,
+.gameboy .start-select .start {
+  display: inline-block;
+  color: #6b67ed;
+  text-shadow: 0px -1px 0px #3436bf;
+  letter-spacing: -1px;
+  width: 55px;
+  font-size: 13px;
+  text-align: center;
+  margin-top: 52px;
+}
+
+.gameboy .start-select .select::before,
+.gameboy .start-select .start::before {
+  content: "";
+  display: block;
+  margin: 0 auto;
+  width: 28px;
+  height: 9px;
+  margin-bottom: 4px;
+  border-radius: 40%;
+  background: linear-gradient(to bottom, #0b0a1c 0%, #0b0a1c 30%, #62636c 70%, #62636c 100%);
+  background-repeat: no-repeat;
+  border: 2px solid #0b0a1c;
+  box-shadow: 0px -2px 1px #8482e9;
+  cursor: pointer;
+}
+
+/* Speaker grille — bottom right, mobile only */
+.gameboy .speaker {
+  position: absolute;
+  display: flex;
+  width: 70px;
+  height: 70px;
+  right: 14px;
+  bottom: 8px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  z-index: 100;
+  transform: skewY(-10deg);
+}
+
+@media (min-width: 640px) {
+  .gameboy .speaker {
+    display: none;
+  }
+}
+
+.gameboy .speaker .dot {
+  width: 7px;
+  height: 7px;
+  margin: 1px;
+  border-radius: 50%;
+}
+
+.gameboy .speaker .dot.placeholder { background-color: transparent; }
+.gameboy .speaker .dot.open { background-color: #0a0717; box-shadow: 0px 0px 2px #7c7be0 inset; }
+.gameboy .speaker .dot.closed { background: linear-gradient(to bottom, #6664e5 0%, #2d3590 100%); box-shadow: 0px 0px 2px #7c7be0 inset; }

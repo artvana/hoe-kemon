@@ -55,7 +55,9 @@ name: CRITICAL STEPS — do this in order:
 
   BANNED: any name that does not contain a recognisable fragment of the actual username.
 
-type1 & type2: Map to drag archetypes from this list ONLY [Normal, Fire, Water, Grass, Electric, Ice, Fighting, Poison, Ground, Flying, Psychic, Bug, Rock, Ghost, Dragon]:
+type1 & type2: MUST be from this list ONLY — exactly these 15 Gen 1 types, no others:
+  Normal, Fire, Water, Grass, Electric, Ice, Fighting, Poison, Ground, Flying, Psychic, Bug, Rock, Ghost, Dragon
+  Map to drag archetypes:
 - Fire = Pageant Queen (competitive, polished, hair spray)
 - Ghost = Camp Queen (theatrical, kooky, spooky glam)
 - Psychic = Mystique Queen (mysterious, ethereal, unclockable)
@@ -74,12 +76,12 @@ type1 & type2: Map to drag archetypes from this list ONLY [Normal, Fire, Water, 
 
 hp: Bias HARD toward 69. If follower count ends in 69 → that number. High engagement → up to 120. Low effort account → 45. Otherwise default 69.
 
-attacks: Exactly 4. ALL FOUR must blend a specific RPDR reference AND something real from their Instagram:
+attacks: Exactly 2 (no more, no fewer). Both must blend a specific RPDR reference AND something from their real Instagram. Attack names must be 1-2 words maximum — punchy and Pokémon-move style. Good examples: Sickening, Lewdness, Vogue, Slaybeam, Glambush, Clapback, Realness, Shadeur, Extravaganza, Sirenlure, Snatchgaze, Libraryscan, Lipsync, Deathdrip, Runwaylash. The attack type MUST also be from the 15 Gen 1 types only:
 - RPDR references to use: "Snatch Game", "Lip Sync for Your Life", "The Library is Open", "Death Drop", "Reading", "Ball", "Runway", "Untucked", "Werk Room", "Entrance Look", "Pit Crew", "Maxi Challenge", "The Shade of It All", "Not Today Satan", "She Done Already Done Had Herses"
 - Their Instagram content: gym selfies, brunch, travel, thirst traps, food, dogs, babies, aesthetic flats, brand deals, fitness content, etc.
 - Combine them: "Runway Brunch Moment", "Library Card Gym Flex", "Lip Sync for Your Latte", "Death Drop Into the DMs", "Snatch Game Selfie Serve"
 - power: 10-90. Four should escalate: weak opener → moderate → strong → finisher.
-- type: match the drag archetype energy of the move
+- type: must be one of the 15 Gen 1 types only
 - superEffective: true only on the most devastating read
 
 weakness: ONE thing, deadpan. Must feel TRUE based on data. Examples: "Natural Lighting", "Being Tagged in Candids", "Constructive Feedback", "An Honest Conversation", "3pm on a Tuesday", "The Comment Section", "Being Offline for 24 Hours", "Accountability"
@@ -93,7 +95,7 @@ Format options:
 
 backstory: 3-4 sentences. PBS nature documentary narrator + drag confessional + Pokémon Mystery Dungeon dramatics. Opens with scene-setting about their Instagram world as if it's an ancient habitat. References their actual content themes as legendary Pokémon lore. Must include at least one real specific fact (follower count, username, bio quote, location if visible).
 
-pokedexEntry: Exactly 2 sentences. Ball category description crossed with a Pokédex field entry. Clinical and scientific about something completely absurd from their real data. The drier the better.
+pokedexEntry: Maximum 2 sentences, maximum 40 words total. No exceptions. Ball category description crossed with a Pokédex field entry. Clinical and scientific about something completely absurd from their real data. The drier the better. Return ONLY the text. No preamble.
 
 visualDescription: 2-3 sentences for AI image generation (Pokemon art style). Physical form based on their content themes and types. MUST INCLUDE: specific heel height, specific outfit style (drag gown? bodysuit? lewk?), color palette from their profile aesthetic, one absurd camp detail (a boa made of their most-liked emoji, platform boots shaped like their most-posted food, etc).
 
@@ -126,8 +128,6 @@ Return ONLY this JSON shape:
     "avoidance": number
   },
   "attacks": [
-    { "name": "string", "power": number, "type": "string", "superEffective": boolean },
-    { "name": "string", "power": number, "type": "string", "superEffective": boolean },
     { "name": "string", "power": number, "type": "string", "superEffective": boolean },
     { "name": "string", "power": number, "type": "string", "superEffective": boolean }
   ],

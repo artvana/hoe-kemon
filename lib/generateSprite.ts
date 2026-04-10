@@ -1,27 +1,37 @@
 import Replicate from 'replicate'
 
 const replicate = new Replicate({ auth: process.env.REPLICATE_API_TOKEN })
-const VERSION = 'ff6cc781634191dd3c49097a615d2fc01b0a8aae31c448e55039a04dcbf36bba'
 
-export async function startSpriteGeneration(visualDescription: string): Promise<string> {
-  // lambdal/text-to-pokemon — fine-tuned on Pokémon art, best for recognisable creature output
-  // We front-load the camp/slutty aesthetic so the fine-tune leans into it
+export async function startSpriteGeneration(
+  visualDescription: string,
+  name: string = '',
+  type: string = ''
+): Promise<string> {
+  // fofr/pokemon-sdxl — fine-tuned SDXL specifically on Pokémon art
+  // Prompt format matches what this model expects for best Pokémon-like results
   const prompt = [
-    'fabulous slutty camp pokemon creature',
-    'drag queen aesthetics',
-    'platform heels',
-    'dramatic accessories',
-    'vibrant over-the-top design',
-    visualDescription.slice(0, 220),
-  ].join(', ')
+    'A single cute creature in the style of official gen 1 Pokemon sprite art',
+    name ? `${name} the ${type} type pokemon` : '',
+    visualDescription.slice(0, 180),
+    'centered on white background',
+    'official Pokemon art style',
+    'Ken Sugimori watercolour illustration',
+    'no text, no humans, no background scenery',
+  ].filter(Boolean).join(', ')
+
+  const negativePrompt =
+    'human, person, text, watermark, multiple creatures, background, scenery, ' +
+    'realistic, photograph, 3d render, ugly, deformed'
 
   const prediction = await replicate.predictions.create({
-    version: VERSION,
+    model: 'fofr/pokemon-sdxl',
     input: {
       prompt,
+      negative_prompt: negativePrompt,
       num_outputs: 1,
-      num_inference_steps: 25,
+      num_inference_steps: 30,
       guidance_scale: 7.5,
+      output_format: 'png',
     },
   })
   return prediction.id
