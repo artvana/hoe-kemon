@@ -103,6 +103,15 @@ height: Vague and camp. Examples: "Taller in heels", "5'2\" (6'8\" in spirit)", 
 
 weight: Always exactly "none of ur business"
 
+basePokemon: Choose the single base Pokémon whose silhouette and personality best fits this person's type1 and vibe. This will be used as the starting image for AI art generation. Must be EXACTLY one name from this list (lowercase only):
+bulbasaur, ivysaur, venusaur, charmander, charmeleon, charizard, squirtle, blastoise, pikachu, raichu, clefairy, clefable, vulpix, jigglypuff, meowth, psyduck, growlithe, arcanine, gengar, eevee, vaporeon, jolteon, flareon, snorlax, mewtwo
+
+Type guidance (not rules, use your instinct):
+Fire→charizard or vulpix | Water→blastoise or psyduck | Grass→venusaur or bulbasaur
+Electric→raichu or pikachu | Ghost/Psychic→gengar or mewtwo | Normal/Flying→clefairy or eevee
+Fighting/Ground→arcanine or snorlax | Poison→gengar | Ice→mewtwo or clefairy
+Rock→snorlax | Bug→meowth (transformation arc) | Dragon→charizard or mewtwo
+
 ═══ RULES ═══
 - MINE THE DATA. Before writing anything, scan for: exact @username, exact follower count, exact following count, bio text (quote it), location, post count, recurring hashtags, content themes, brand deals visible, caption style (emoji-heavy? low effort? tryhard?), any recurring elements (dogs? coffee? gym selfies? sunset photos?).
 - SPECIFICITY IS EVERYTHING. "Posts food content" → FAIL. "Has 23 posts of the same acai bowl" → SERVE. "Captions every gym selfie with 'the grind 💪'" → SERVE. "Bio says 'living my best life' — a threat" → SERVE.
@@ -136,7 +145,8 @@ Return ONLY this JSON shape:
   "backstory": "string",
   "pokedexEntry": "string",
   "height": "string",
-  "weight": "none of ur business"
+  "weight": "none of ur business",
+  "basePokemon": "string"
 }`,
       },
     ],

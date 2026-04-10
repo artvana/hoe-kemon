@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export const maxDuration = 60
 import { fetchInstagramData } from '@/lib/odlClient'
 import { generateWithClaude } from '@/lib/generateHoekemon'
-import { startSpriteGenerationFromData } from '@/lib/generateSprite'
+import { startSpriteGeneration } from '@/lib/generateSprite'
 
 export async function POST(req: NextRequest) {
   const { connectionId, playerName } = await req.json()
@@ -22,35 +22,30 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `ODL fetch failed: ${msg}` }, { status: 500 })
   }
 
-  // 2. Run Claude + Replicate in parallel.
-  //    The generic sprite starts generating immediately while Claude thinks (~15-20s).
-  //    By the time the pokédex dialogue finishes, the sprite is likely done.
+  // 2. Generate Hoekemon with Claude (includes basePokemon for img2img)
   let hoekemon
-  let replicateId: string | null = null
-
   try {
-    const [claudeResult, spriteId] = await Promise.allSettled([
-      generateWithClaude(instagramData, playerName),
-      startSpriteGenerationFromData(instagramData, playerName),
-    ])
-
-    if (claudeResult.status === 'rejected') {
-      const msg = claudeResult.reason instanceof Error ? claudeResult.reason.message : String(claudeResult.reason)
-      console.error('[Claude] Generation failed:', msg)
-      return NextResponse.json({ error: `Hoekemon generation failed: ${msg}` }, { status: 500 })
-    }
-
-    hoekemon = claudeResult.value
-
-    if (spriteId.status === 'fulfilled') {
-      replicateId = spriteId.value
-    } else {
-      console.error('[Replicate] Sprite generation failed to start:', spriteId.reason)
-      // Non-fatal — card renders with shimmer placeholder
-    }
+    hoekemon = await generateWithClaude(instagramData, playerName)
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
-    return NextResponse.json({ error: `Generation failed: ${msg}` }, { status: 500 })
+    console.error('[Claude] Generation failed:', msg)
+    return NextResponse.json({ error: `Hoekemon generation failed: ${msg}` }, { status: 500 })
+  }
+
+  // 3. Start img2img sprite using the base Pokémon Claude picked.
+  //    The PokeAPI official artwork is used as init_image so the creature
+  //    inherits the base silhouette, then the prompt drives the transformation.
+  //    Non-fatal — card renders with shimmer placeholder on failure.
+  let replicateId: string | null = null
+  try {
+    replicateId = await startSpriteGeneration(
+      hoekemon.visualDescription,
+      hoekemon.name,
+      hoekemon.type1,
+      hoekemon.basePokemon
+    )
+  } catch (err) {
+    console.error('[Replicate] Sprite generation failed to start:', err)
   }
 
   return NextResponse.json({ hoekemon, replicateId })

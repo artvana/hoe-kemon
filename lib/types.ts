@@ -45,6 +45,7 @@ export interface HoekemonData {
   pokedexEntry: string
   height: string
   weight: string
+  basePokemon: string    // base Pokémon for img2img — must be a key in POKEMON_IDS
   spriteUrl?: string
 }
 
