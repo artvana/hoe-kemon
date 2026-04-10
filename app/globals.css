@@ -33,7 +33,7 @@
 html, body {
   width: 100%;
   height: 100%;
-  background: var(--gb-black);
+  background: #F0EFE7;
   font-family: var(--font-press-start), 'Press Start 2P', monospace;
   cursor: default;
   overflow: hidden;
@@ -236,7 +236,11 @@ html, body {
 
 /* ─── OAK LAB ─── */
 .lab-bg {
-  background: #D0D0D0;
+  background: #C8C8C8;
+  background-image:
+    linear-gradient(rgba(0,0,0,0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.08) 1px, transparent 1px);
+  background-size: 16px 16px;
 }
 
 .lab-floor-line {
@@ -262,7 +266,7 @@ html, body {
 
 /* ─── BATTLE SCREEN ─── */
 .battle-bg {
-  background: var(--gb-screen-dark);
+  background: #F0EFE7;
 }
 
 .battle-platform-player {
@@ -371,6 +375,13 @@ html, body {
   100% { background-position: 200% 0; }
 }
 
+@keyframes hoefreak-hop {
+  0%, 100% { transform: translateY(0) scaleY(1) scaleX(1); }
+  30%  { transform: translateY(-16px) scaleY(1.12) scaleX(0.9); }
+  55%  { transform: translateY(-20px) scaleY(1.06) scaleX(0.95); }
+  78%  { transform: translateY(-2px)  scaleY(0.91) scaleX(1.09); }
+}
+
 @keyframes crt-flicker {
   0%, 100% { opacity: 1; }
   92% { opacity: 1; }
@@ -385,3 +396,4 @@ html, body {
 .animate-flash-white { animation: flash-white 0.3s ease-in-out 3; }
 .animate-silhouette-pulse { animation: silhouette-pulse 1.5s ease-in-out infinite; }
 .animate-crt { animation: crt-flicker 4s infinite; }
+.animate-hoefreak-hop { animation: hoefreak-hop 0.75s ease-in-out infinite; }

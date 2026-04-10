@@ -17,29 +17,25 @@ export default function NameEntry({ onSubmit }: NameEntryProps) {
   return (
     <div
       className="screen"
-      style={{ background: '#2038A0' }}
+      style={{ background: '#F0EFE7' }}
       onClick={(e) => e.stopPropagation()}
     >
-      <div
-        style={{
-          background: 'var(--gb-cream)',
-          border: '4px solid var(--gb-black)',
-          boxShadow: '6px 6px 0 var(--gb-black)',
-          padding: '24px 28px',
-          minWidth: 280,
-          maxWidth: 340,
-          width: '90%',
-        }}
-      >
-        <p
-          style={{
-            fontFamily: "'Press Start 2P', monospace",
-            fontSize: 10,
-            color: 'var(--gb-black)',
-            marginBottom: 20,
-            lineHeight: 1.6,
-          }}
-        >
+      <div style={{
+        background: '#F0EFE7',
+        border: '4px solid #000',
+        boxShadow: 'inset 0 0 0 2px #F0EFE7, inset 0 0 0 4px #000',
+        padding: '28px 32px',
+        minWidth: 280,
+        maxWidth: 340,
+        width: '90%',
+      }}>
+        <p style={{
+          fontFamily: "'Press Start 2P', monospace",
+          fontSize: 9,
+          color: '#000',
+          marginBottom: 22,
+          lineHeight: 1.8,
+        }}>
           YOUR NAME?
         </p>
 
@@ -53,10 +49,10 @@ export default function NameEntry({ onSubmit }: NameEntryProps) {
           autoFocus
           style={{
             fontFamily: "'VT323', monospace",
-            fontSize: 24,
-            color: 'var(--gb-black)',
-            background: 'white',
-            border: '3px solid var(--gb-black)',
+            fontSize: 26,
+            color: '#000',
+            background: '#fff',
+            border: '3px solid #000',
             padding: '6px 10px',
             width: '100%',
             outline: 'none',
@@ -66,17 +62,23 @@ export default function NameEntry({ onSubmit }: NameEntryProps) {
           }}
         />
 
-        <div style={{ marginTop: 16 }}>
+        <div style={{ marginTop: 18 }}>
           <button
-            className="menu-option"
             style={{
+              fontFamily: "'Press Start 2P', monospace",
+              fontSize: 9,
+              color: '#000',
               background: 'none',
               border: 'none',
               cursor: 'pointer',
-              padding: 0,
+              padding: '8px 0',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
             }}
             onClick={handleSubmit}
           >
+            <span style={{ animation: 'blink 0.8s step-end infinite' }}>▶</span>
             OK
           </button>
         </div>

@@ -170,7 +170,7 @@ export default function Page() {
 
       case 'oak-intro':
         return (
-          <div className="screen" style={{ background: '#F0F0F0', position: 'relative' }}>
+          <div className="screen" style={{ background: '#FFFFFF', position: 'relative' }}>
             <OakSprite />
             <DialogueBox
               speaker="OAK"
@@ -192,7 +192,7 @@ export default function Page() {
 
       case 'connect-instagram':
         return (
-          <div className="screen" style={{ background: '#F0F0F0', position: 'relative' }}>
+          <div className="screen" style={{ background: '#FFFFFF', position: 'relative' }}>
             <OakSprite />
             <DialogueBox
               speaker="OAK"
@@ -325,7 +325,7 @@ export default function Page() {
         return (
           <div
             className="screen"
-            style={{ background: 'var(--gb-screen-dark)', flexDirection: 'column', gap: 24 }}
+            style={{ background: '#F0EFE7', flexDirection: 'column', gap: 24 }}
           >
             {generateError ? (
               <>
@@ -333,7 +333,7 @@ export default function Page() {
                   style={{
                     fontFamily: "'Press Start 2P', monospace",
                     fontSize: 8,
-                    color: 'var(--gb-red)',
+                    color: '#CC0000',
                     textAlign: 'center',
                     maxWidth: 280,
                     lineHeight: 2,
@@ -345,7 +345,7 @@ export default function Page() {
                   style={{
                     fontFamily: "'VT323', monospace",
                     fontSize: 18,
-                    color: 'var(--gb-screen-green)',
+                    color: '#000',
                     textAlign: 'center',
                     maxWidth: 300,
                     lineHeight: 1.4,
@@ -361,9 +361,9 @@ export default function Page() {
                   style={{
                     fontFamily: "'Press Start 2P', monospace",
                     fontSize: 8,
-                    color: 'var(--gb-screen-green)',
+                    color: '#000',
                     background: 'none',
-                    border: '2px solid var(--gb-screen-green)',
+                    border: '2px solid #000',
                     padding: '10px 16px',
                     cursor: 'pointer',
                     marginTop: 8,
@@ -378,7 +378,7 @@ export default function Page() {
                   style={{
                     fontFamily: "'Press Start 2P', monospace",
                     fontSize: 10,
-                    color: 'var(--gb-screen-green)',
+                    color: '#000',
                     lineHeight: 2,
                     textAlign: 'center',
                   }}
@@ -390,7 +390,7 @@ export default function Page() {
                   style={{
                     fontFamily: "'VT323', monospace",
                     fontSize: 22,
-                    color: 'var(--gb-screen-green)',
+                    color: '#000',
                     animation: 'blink 0.8s step-end infinite',
                     letterSpacing: 2,
                   }}
@@ -426,8 +426,8 @@ export default function Page() {
           <div
             className="screen"
             style={{
-              background: '#0a0a0a',
-              color: 'var(--gb-screen-green)',
+              background: '#F0EFE7',
+              color: '#000',
               fontFamily: "'VT323', monospace",
               fontSize: 24,
             }}
@@ -443,7 +443,7 @@ export default function Page() {
           <div
             className="screen"
             style={{
-              background: '#0a0a0a',
+              background: '#F0EFE7',
               overflow: 'auto',
               paddingBottom: 148,
               paddingTop: 20,
@@ -465,7 +465,7 @@ export default function Page() {
           <div
             className="screen"
             style={{
-              background: '#0a0a0a',
+              background: '#F0EFE7',
               overflow: 'auto',
               padding: '20px 0 48px',
               gap: 24,

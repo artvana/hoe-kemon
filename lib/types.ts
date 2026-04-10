@@ -31,11 +31,11 @@ export interface HoekemonData {
   hp: number
   visualDescription: string
   stats: {
-    slay: number
-    thirst: number
-    drama: number
-    rizz: number
-    avoidance: number
+    charisma: number    // C — engagement magnetism
+    uniqueness: number  // U — distinctiveness of aesthetic
+    nerve: number       // N — boldness / posting frequency
+    talent: number      // T — actual skill on display
+    avoidance: number   // how much they ghost their own audience
   }
   attacks: HoekemonAttack[]
   weakness: string
