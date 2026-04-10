@@ -38,7 +38,7 @@ export default function NameEntry({ onSubmit }: NameEntryProps) {
   }
 
   function handleSubmit() {
-    const clean = value.trim().replace(/^@/, '')
+    const clean = value.trim()
     if (clean) onSubmit(clean)
   }
 
@@ -79,7 +79,7 @@ export default function NameEntry({ onSubmit }: NameEntryProps) {
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter') handleSubmit() }}
-                placeholder="@handle"
+                placeholder="e.g. Jamie"
                 maxLength={20}
                 style={{
                   fontFamily: VT, fontSize: 16, color: '#000',
@@ -164,15 +164,16 @@ export default function NameEntry({ onSubmit }: NameEntryProps) {
               onClick={() => { setCursor(i); select(i) }}
               onMouseEnter={() => setCursor(i)}
               style={{
-                fontFamily: PS2, fontSize: 6.5, color: '#000',
-                padding: '3px 2px',
+                fontFamily: VT, fontSize: 18, color: '#000',
+                padding: '1px 2px',
                 display: 'flex', alignItems: 'center', gap: 4,
-                cursor: 'pointer',
+                cursor: 'pointer', lineHeight: 1.3,
               }}
             >
               <span style={{
-                width: 8, flexShrink: 0, lineHeight: 1,
+                width: 12, flexShrink: 0,
                 color: cursor === i ? '#000' : 'transparent',
+                fontFamily: PS2, fontSize: 7,
               }}>▶</span>
               <span>{opt}</span>
             </div>
