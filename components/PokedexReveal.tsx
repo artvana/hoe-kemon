@@ -123,47 +123,43 @@ export default function PokedexReveal({
       {/* ── HOE-KDEX header bar ── */}
       <div style={{
         background: '#0F380F',
-        padding: '6px 14px',
+        padding: '5px 10px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         flexShrink: 0,
       }}>
-        <span style={{
-          fontFamily: "'Press Start 2P', monospace",
-          fontSize: 'max(7px, 1.8vw)', color: '#9BBC0F', letterSpacing: 2,
-        }}>HOE-KDEX</span>
-        <span style={{
-          fontFamily: "'Press Start 2P', monospace",
-          fontSize: 'max(6px, 1.5vw)', color: '#9BBC0F',
-        }}>{beat}/3</span>
+        <span style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 8, color: '#9BBC0F', letterSpacing: 2 }}>
+          HOE-KDEX
+        </span>
+        <span style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 7, color: '#9BBC0F' }}>
+          {beat}/3
+        </span>
       </div>
 
-      {/* ── Main data panel — left: sprite+No., right: stats ── */}
-      {/* Exactly matches frame_106 layout: 42% left / 58% right */}
+      {/* ── Main data panel — left: sprite+No., right: name+stats ── */}
       <div style={{
         display: 'flex',
-        borderBottom: '4px solid #0F380F',
+        height: 100,
+        borderBottom: '3px solid #0F380F',
         background: '#9BBC0F',
         flexShrink: 0,
+        overflow: 'hidden',
       }}>
-
-        {/* LEFT: sprite + No. */}
+        {/* LEFT: sprite */}
         <div style={{
           width: '42%',
           flexShrink: 0,
-          borderRight: '4px solid #0F380F',
+          borderRight: '3px solid #0F380F',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '8px 6px 6px',
+          justifyContent: 'center',
+          padding: '6px',
           position: 'relative',
           overflow: 'hidden',
         }}>
           <Scanlines />
-          {/* Sprite box */}
           <div style={{
-            width: '100%',
-            aspectRatio: '1',
+            width: '80%', height: '80%',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             position: 'relative',
           }}>
@@ -172,16 +168,11 @@ export default function PokedexReveal({
               <img
                 src={spriteUrl}
                 alt={data.name}
-                style={{
-                  width: '88%', height: '88%',
-                  objectFit: 'contain',
-                  imageRendering: 'pixelated',
-                  position: 'relative',
-                }}
+                style={{ width: '100%', height: '100%', objectFit: 'contain', imageRendering: 'pixelated' }}
               />
             ) : (
               <div style={{
-                width: '55%', height: '55%',
+                width: '70%', height: '70%',
                 background: type1Colour,
                 clipPath: 'polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%)',
                 opacity: 0.7,
@@ -189,126 +180,104 @@ export default function PokedexReveal({
               }} />
             )}
           </div>
-
-          {/* No. label — bottom-left exactly like frame_106 */}
           <div style={{
             fontFamily: "'Press Start 2P', monospace",
-            fontSize: 'max(5px, 1.5vw)',
+            fontSize: 5,
             color: '#0F380F',
-            alignSelf: 'flex-start',
-            marginTop: 4,
-            position: 'relative',
+            position: 'absolute',
+            bottom: 5, left: 7,
           }}>No.069</div>
         </div>
 
         {/* RIGHT: name, species, HT, WT */}
         <div style={{
           flex: 1,
-          padding: '10px 12px 8px',
+          padding: '8px 10px 6px',
           display: 'flex',
           flexDirection: 'column',
-          gap: 2,
-          background: '#9BBC0F',
+          gap: 1,
           position: 'relative',
           overflow: 'hidden',
         }}>
           <Scanlines />
           <div style={{
             fontFamily: "'VT323', monospace",
-            fontSize: 'max(20px, 5vw)',
+            fontSize: 18,
             color: '#0F380F',
             fontWeight: 'bold',
-            lineHeight: 1.1,
+            lineHeight: 1,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
             position: 'relative',
           }}>{data.name.toUpperCase()}</div>
 
-          <div style={{
-            fontFamily: "'VT323', monospace",
-            fontSize: 'max(16px, 4vw)',
-            color: '#0F380F',
-            position: 'relative',
-          }}>{species}</div>
-
-          <div style={{ height: 6 }} />
-
-          <div style={{
-            fontFamily: "'VT323', monospace",
-            fontSize: 'max(16px, 4vw)',
-            color: '#0F380F',
-            display: 'flex', gap: 6,
-            position: 'relative',
-          }}>
-            <span>HT</span>
-            <span style={{ fontWeight: 'bold' }}>{data.height}</span>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: 13, color: '#0F380F', position: 'relative' }}>
+            {species}
           </div>
 
-          <div style={{
-            fontFamily: "'VT323', monospace",
-            fontSize: 'max(16px, 4vw)',
-            color: '#0F380F',
-            display: 'flex', gap: 6,
-            position: 'relative',
-          }}>
-            <span>WT</span>
-            <span style={{ fontWeight: 'bold' }}>{data.weight}</span>
+          <div style={{ height: 4 }} />
+
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: 13, color: '#0F380F', display: 'flex', gap: 4, position: 'relative' }}>
+            <span>HT</span><span style={{ fontWeight: 'bold' }}>{data.height}</span>
+          </div>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: 13, color: '#0F380F', display: 'flex', gap: 4, position: 'relative' }}>
+            <span>WT</span><span style={{ fontWeight: 'bold' }}>{data.weight}</span>
           </div>
         </div>
       </div>
 
-      {/* ── Decorative divider — small squares pattern matching frame_106 ── */}
+      {/* ── Decorative divider ── */}
       <div style={{
         background: '#9BBC0F',
-        borderBottom: '4px solid #0F380F',
-        padding: '3px 8px',
+        borderBottom: '3px solid #0F380F',
+        padding: '2px 8px',
         overflow: 'hidden',
         flexShrink: 0,
       }}>
         <div style={{
           fontFamily: "'Press Start 2P', monospace",
-          fontSize: 'max(5px, 1.3vw)',
+          fontSize: 5,
           color: '#0F380F',
           letterSpacing: 2,
           whiteSpace: 'nowrap',
         }}>
-          {'■□'.repeat(30)}
+          {'■□'.repeat(40)}
         </div>
       </div>
 
-      {/* ── Scrolling description area — typing animation ── */}
+      {/* ── Scrolling description area ── */}
       <div style={{
         flex: 1,
         background: '#9BBC0F',
-        padding: '10px 14px',
+        padding: '8px 12px',
         position: 'relative',
         overflow: 'hidden',
-        minHeight: 80,
       }}>
         <Scanlines />
         <div style={{
           fontFamily: "'VT323', monospace",
-          fontSize: 'max(18px, 4.5vw)',
+          fontSize: 16,
           color: '#0F380F',
           lineHeight: 1.5,
           whiteSpace: 'pre-wrap',
           position: 'relative',
         }}>
           {displayed}
-          {typing && (
-            <span style={{ animation: 'blink 0.5s step-end infinite' }}>█</span>
-          )}
+          {typing && <span style={{ animation: 'blink 0.5s step-end infinite' }}>█</span>}
         </div>
       </div>
 
-      {/* ── Footer: tap hint ── */}
+      {/* ── Footer ── */}
       <div style={{
         background: '#0F380F',
-        padding: '5px 14px',
+        padding: '4px 10px',
         display: 'flex', alignItems: 'center', justifyContent: 'flex-end',
         flexShrink: 0,
       }}>
         <span style={{
           fontFamily: "'Press Start 2P', monospace",
-          fontSize: 'max(5px, 1.3vw)',
+          fontSize: 5,
           color: '#9BBC0F',
           animation: typing ? 'none' : 'blink 0.8s step-end infinite',
           opacity: typing ? 0.4 : 1,

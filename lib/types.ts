@@ -8,6 +8,7 @@ export type Scene =
   | 'pokedex-species'
   | 'pokedex-backstory'
   | 'pokedex-entry'
+  | 'sprite-wait'
   | 'card-reveal'
   | 'oak-outro'
 

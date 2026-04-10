@@ -158,6 +158,20 @@ export default function Page() {
     }
   }, [state.hoekemon, state.scene]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Auto-advance from sprite-wait once sprite is ready
+  useEffect(() => {
+    if (state.scene === 'sprite-wait' && state.spriteUrl) {
+      wipeToScene('card-reveal')
+    }
+  }, [state.spriteUrl, state.scene]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Timeout: give up waiting for sprite after 90s and show card anyway
+  useEffect(() => {
+    if (state.scene !== 'sprite-wait') return
+    const t = setTimeout(() => wipeToScene('card-reveal'), 90000)
+    return () => clearTimeout(t)
+  }, [state.scene]) // eslint-disable-line react-hooks/exhaustive-deps
+
   // ─── Scene renderer ─────────────────────────────────────────────────────────
   const renderScene = () => {
     switch (state.scene) {
@@ -372,7 +386,7 @@ export default function Page() {
               state.scene === 'pokedex-species' ? 1
               : state.scene === 'pokedex-backstory' ? 2 : 3
             }
-            onComplete={() => wipeToScene('card-reveal')}
+            onComplete={() => wipeToScene(state.spriteUrl ? 'card-reveal' : 'sprite-wait')}
             onBeatAdvance={(beat) => {
               if (beat === 2) setState((s) => ({ ...s, scene: 'pokedex-backstory' }))
               if (beat === 3) setState((s) => ({ ...s, scene: 'pokedex-entry' }))
@@ -384,6 +398,88 @@ export default function Page() {
             fontFamily: "'VT323', monospace", fontSize: 22,
           }}>
             <span style={{ animation: 'blink 0.8s step-end infinite' }}>LOADING DATA...</span>
+          </div>
+        )
+
+      // ── Sprite wait — still inside GameBoy, waits for sprite before card reveal ──
+      case 'sprite-wait':
+        return (
+          <div
+            className="screen"
+            style={{ background: '#F0EFE7', flexDirection: 'column', gap: 0, padding: 0, overflow: 'hidden' }}
+          >
+            {/* Oak's pokédex scanning effect — top section */}
+            <div style={{
+              background: '#0F380F', color: '#9BBC0F',
+              padding: '6px 10px', flexShrink: 0,
+              fontFamily: "'Press Start 2P', monospace", fontSize: 7,
+              display: 'flex', justifyContent: 'space-between',
+            }}>
+              <span>HOE-KÉMON</span>
+              <span style={{ animation: 'blink 0.6s step-end infinite' }}>◆◆◆</span>
+            </div>
+
+            {/* Pokéball animation */}
+            <div style={{
+              flex: 1, background: '#9BBC0F',
+              display: 'flex', flexDirection: 'column',
+              alignItems: 'center', justifyContent: 'center',
+              gap: 10, position: 'relative', overflow: 'hidden',
+            }}>
+              {/* Scanlines */}
+              <div style={{
+                position: 'absolute', inset: 0, pointerEvents: 'none',
+                backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.07) 3px, rgba(0,0,0,0.07) 4px)',
+              }} />
+
+              {/* Animated pokéball */}
+              <div style={{
+                width: 52, height: 52, borderRadius: '50%',
+                border: '3px solid #0F380F', overflow: 'hidden',
+                position: 'relative', flexShrink: 0,
+                animation: 'wobble 0.6s ease-in-out infinite',
+              }}>
+                <div style={{ width: '100%', height: '50%', background: '#CC0000' }} />
+                <div style={{ width: '100%', height: '50%', background: '#F0EFE7' }} />
+                <div style={{
+                  position: 'absolute', top: '50%', left: 0, right: 0,
+                  height: 4, background: '#0F380F', transform: 'translateY(-50%)',
+                }} />
+                <div style={{
+                  position: 'absolute', top: '50%', left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  width: 14, height: 14, borderRadius: '50%',
+                  background: '#F0EFE7', border: '3px solid #0F380F',
+                  zIndex: 2,
+                }} />
+              </div>
+
+              <div style={{
+                fontFamily: "'Press Start 2P', monospace",
+                fontSize: 6, color: '#0F380F', textAlign: 'center', lineHeight: 2.2,
+              }}>
+                <div>OAK IS</div>
+                <div>DEVELOPING</div>
+                <div>YOUR CARD!</div>
+              </div>
+
+              <div style={{
+                fontFamily: "'VT323', monospace",
+                fontSize: 16, color: '#0F380F',
+                animation: 'blink 0.8s step-end infinite',
+              }}>
+                ████████████░░░░░░
+              </div>
+            </div>
+
+            {/* Bottom bar */}
+            <div style={{
+              background: '#0F380F', padding: '4px 10px',
+              fontFamily: "'Press Start 2P', monospace", fontSize: 5,
+              color: '#9BBC0F', flexShrink: 0,
+            }}>
+              Please hold...
+            </div>
           </div>
         )
 
