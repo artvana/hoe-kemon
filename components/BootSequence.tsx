@@ -1,31 +1,38 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { playBootChime } from '@/lib/audio'
 
 interface BootSequenceProps {
   onComplete: () => void
 }
 
-// Calculate integer scale so the 192×144 composition fills the viewport
-// Integer scale preserves pixel-perfect rendering
-function useGBScale() {
-  const [scale, setScale] = useState(2)
+// Calculate integer scale so the 192×144 composition fills the GameBoy display div.
+// Measures the wrapper element (the actual .gb-wrapper div) not the viewport,
+// so it works correctly when embedded inside the GameBoy shell.
+function useGBScale(wrapperRef: React.RefObject<HTMLDivElement>) {
+  const [scale, setScale] = useState(1)
   useEffect(() => {
     function update() {
-      const sx = Math.floor(window.innerWidth / 192)
-      const sy = Math.floor(window.innerHeight / 144)
+      const el = wrapperRef.current
+      if (!el) return
+      const w = el.clientWidth  || el.offsetWidth
+      const h = el.clientHeight || el.offsetHeight
+      const sx = Math.floor(w / 192)
+      const sy = Math.floor(h / 144)
       setScale(Math.max(1, Math.min(sx, sy)))
     }
     update()
-    window.addEventListener('resize', update)
-    return () => window.removeEventListener('resize', update)
-  }, [])
+    const ro = new ResizeObserver(update)
+    if (wrapperRef.current) ro.observe(wrapperRef.current)
+    return () => ro.disconnect()
+  }, [wrapperRef])
   return scale
 }
 
 export default function BootSequence({ onComplete }: BootSequenceProps) {
-  const scale = useGBScale()
+  const wrapperRef = useRef<HTMLDivElement>(null)
+  const scale = useGBScale(wrapperRef)
 
   // Play chime and trigger onComplete at end of scene 3 animation
   useEffect(() => {
@@ -45,6 +52,7 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
 
   return (
     <div
+      ref={wrapperRef}
       className="gb-wrapper"
       onClick={canSkip ? onComplete : undefined}
       style={{ cursor: canSkip ? 'pointer' : 'default' }}

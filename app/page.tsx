@@ -18,7 +18,7 @@ const OAK_INTRO_LINES = [
   'Welcome to the world of\nHOE-KEMON!',
   'My name is OAK!\nPeople call me the\nHOE-KEMON PROF!',
   'This world is inhabited by\ncreatures called HOE-KEMON!',
-  'For some people, they are pets.\nOthers use them for CLOUT.',
+  'Some trainers battle with them.\nOthers use them to out-hoe\nevery basic in the region.',
   'Myself...\nI study HOE-KEMON as a\nprofession.',
   'First, what is your name?',
 ]
@@ -296,35 +296,11 @@ export default function Page() {
               />
             ))}
 
-            {/* Dialogue box pinned to bottom, overlaps image */}
-            <div
-              style={{
-                position: 'absolute', bottom: 0, left: 0, right: 0,
-                height: '30%',
-                background: 'var(--gb-cream)',
-                borderTop: '3px solid var(--gb-black)',
-                boxShadow: 'inset 0 0 0 3px var(--gb-cream), inset 0 0 0 5px var(--gb-black)',
-                padding: '8% 5% 4%',
-                zIndex: 3,
-              }}
-            >
-              <span style={{
-                position: 'absolute', top: -14, left: '4%',
-                fontFamily: "'Press Start 2P', monospace", fontSize: 7,
-                background: 'var(--gb-cream)', border: '2px solid var(--gb-black)',
-                padding: '3px 6px', color: 'var(--gb-black)',
-              }}>OAK</span>
-              <div style={{
-                fontFamily: "'VT323', monospace", fontSize: 20,
-                color: 'var(--gb-black)', lineHeight: 1.4,
-              }}>
-                Go ahead — choose a HOE-KÉBALL!
-              </div>
-              <span style={{
-                position: 'absolute', bottom: '8%', right: '4%',
-                fontFamily: "'Press Start 2P', monospace", fontSize: 8,
-                color: 'var(--gb-black)', animation: 'blink 0.8s step-end infinite',
-              }}>▲</span>
+            {/* Dialogue box pinned to bottom — matches .dialogue-box style */}
+            <div className="dialogue-box" style={{ zIndex: 3, pointerEvents: 'none' }}>
+              <span className="dialogue-speaker">OAK</span>
+              <div className="dialogue-text">Go ahead — choose a HOE-KÉBALL!</div>
+              <span className="dialogue-advance">▲</span>
             </div>
           </div>
         )
