@@ -58,14 +58,7 @@ export default function BattleScreen({ onComplete }: BattleScreenProps) {
 
       {/* Player platform + Oak */}
       <div className="battle-platform-player" />
-      <OakSprite
-        style={{
-          position: 'absolute',
-          bottom: 195,
-          left: 60,
-          transform: 'none',
-        }}
-      />
+      <OakSprite />
 
       {/* Player HUD */}
       <div className="battle-hud battle-hud-player">

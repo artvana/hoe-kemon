@@ -12,6 +12,15 @@ interface PokedexRevealProps {
   onBeatAdvance?: (beat: number) => void
 }
 
+// Gen 1 species labels — the right-column "LIZARD POKéMON" equivalent
+const SPECIES: Record<string, string> = {
+  Normal: 'VERSATILE', Fire: 'PAGEANT', Water: 'CLUB KID',
+  Grass: 'ARTSY', Electric: 'COMEDY', Ice: 'ICE QUEEN',
+  Fighting: 'WERK ROOM', Poison: 'DRAMA', Ground: 'EARTHY REALNESS',
+  Flying: 'FASHION', Psychic: 'MYSTIQUE', Bug: 'GLOW-UP',
+  Rock: 'VETERAN', Ghost: 'CAMP', Dragon: 'ICONIC',
+}
+
 export default function PokedexReveal({
   data,
   spriteUrl,
@@ -33,38 +42,22 @@ export default function PokedexReveal({
   const onBeatAdvanceRef = useRef(onBeatAdvance)
   onBeatAdvanceRef.current = onBeatAdvance
 
-  // Map type to drag-species label — like "FLAME POKéMON" in the real game
-  const SPECIES: Record<string, string> = {
-    Normal: 'VERSATILE', Fire: 'PAGEANT', Water: 'CLUB KID',
-    Grass: 'ARTSY', Electric: 'COMEDY', Ice: 'ICE QUEEN',
-    Fighting: 'WERK ROOM', Poison: 'DRAMA', Ground: 'EARTHY REALNESS',
-    Flying: 'FASHION', Psychic: 'MYSTIQUE', Bug: 'GLOW-UP',
-    Rock: 'VETERAN', Ghost: 'CAMP', Dragon: 'ICONIC',
-  }
   const species = SPECIES[data.type1] ?? data.type1.toUpperCase()
 
+  // What types in the scrolling description area for each beat
   const beatText = useMemo(() => {
     switch (beat) {
-      // ── Beat 1: exact Gen 1 Pokédex registration screen ──────────────────
-      case 1:
-        return `No.069\n${data.name.toUpperCase()}\n\n${species} POKéMON\n\nHT  ${data.height}\nWT  ${data.weight}\n\nLv.${data.level}`
-
-      // ── Beat 2: origin lore — no header, just scrolling text like the real game ──
-      case 2:
-        return data.backstory
-
-      // ── Beat 3: Pokédex entry — clean, dry, clinical. Exactly Gen 1 style ─
-      case 3:
-        return data.pokedexEntry
-
-      default:
-        return ''
+      case 1: return data.pokedexEntry
+      case 2: return data.backstory
+      case 3: return `Lv.${data.level}  HP ${data.hp}\n\n${data.catchPhrase}`
+      default: return ''
     }
-  }, [beat, data, species])
+  }, [beat, data])
 
   const beatTextRef = useRef(beatText)
   beatTextRef.current = beatText
 
+  // Type out the beat text
   useEffect(() => {
     clearInterval(intervalRef.current)
     let i = 0
@@ -81,6 +74,7 @@ export default function PokedexReveal({
     return () => clearInterval(intervalRef.current)
   }, [beatText])
 
+  // Click to skip typing / advance beats
   useEffect(() => {
     function onClick() {
       if (typingRef.current) {
@@ -103,68 +97,83 @@ export default function PokedexReveal({
 
   const type1Colour = TYPE_COLOURS[data.type1] ?? '#A8A878'
 
+  // Scanline overlay — reused in both panels
+  const Scanlines = () => (
+    <div style={{
+      position: 'absolute', inset: 0, pointerEvents: 'none',
+      backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.07) 3px, rgba(0,0,0,0.07) 4px)',
+    }} />
+  )
+
   return (
+    // Full-screen cream background — layout fills from top
     <div
       className="screen"
       style={{
         background: '#F0EFE7',
         cursor: 'pointer',
         flexDirection: 'column',
-        gap: 20,
+        justifyContent: 'flex-start',
+        alignItems: 'stretch',
+        padding: 0,
+        gap: 0,
+        overflow: 'hidden',
       }}
     >
-      {/* ─── HOE-KDEX LABEL ─── */}
+      {/* ── HOE-KDEX header bar ── */}
       <div style={{
-        fontFamily: "'Press Start 2P', monospace",
-        fontSize: 8,
-        color: '#000',
-        letterSpacing: 2,
+        background: '#0F380F',
+        padding: '6px 14px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        flexShrink: 0,
       }}>
-        HOE-KDEX
+        <span style={{
+          fontFamily: "'Press Start 2P', monospace",
+          fontSize: 'max(7px, 1.8vw)', color: '#9BBC0F', letterSpacing: 2,
+        }}>HOE-KDEX</span>
+        <span style={{
+          fontFamily: "'Press Start 2P', monospace",
+          fontSize: 'max(6px, 1.5vw)', color: '#9BBC0F',
+        }}>{beat}/3</span>
       </div>
 
-      {/* ─── TWO-COLUMN DISPLAY ─── */}
+      {/* ── Main data panel — left: sprite+No., right: stats ── */}
+      {/* Exactly matches frame_106 layout: 42% left / 58% right */}
       <div style={{
         display: 'flex',
-        gap: 12,
-        width: '92vw',
-        maxWidth: 540,
-        alignItems: 'stretch',
+        borderBottom: '4px solid #0F380F',
+        background: '#9BBC0F',
+        flexShrink: 0,
       }}>
-        {/* ─── LEFT: Sprite screen ─── */}
+
+        {/* LEFT: sprite + No. */}
         <div style={{
+          width: '42%',
           flexShrink: 0,
+          borderRight: '4px solid #0F380F',
           display: 'flex',
           flexDirection: 'column',
-          gap: 8,
           alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '8px 6px 6px',
+          position: 'relative',
+          overflow: 'hidden',
         }}>
+          <Scanlines />
+          {/* Sprite box */}
           <div style={{
-            background: '#9BBC0F',
-            border: '4px solid #000',
-            width: 148,
-            height: 148,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            width: '100%',
+            aspectRatio: '1',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
             position: 'relative',
-            overflow: 'hidden',
           }}>
-            {/* Scanlines */}
-            <div style={{
-              position: 'absolute',
-              inset: 0,
-              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 4px)',
-              pointerEvents: 'none',
-            }} />
             {spriteUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={spriteUrl}
                 alt={data.name}
                 style={{
-                  width: '85%',
-                  height: '85%',
+                  width: '88%', height: '88%',
                   objectFit: 'contain',
                   imageRendering: 'pixelated',
                   position: 'relative',
@@ -172,98 +181,141 @@ export default function PokedexReveal({
               />
             ) : (
               <div style={{
-                width: '60%',
-                height: '60%',
+                width: '55%', height: '55%',
                 background: type1Colour,
                 clipPath: 'polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%)',
-                opacity: 0.6,
+                opacity: 0.7,
                 animation: 'silhouette-pulse 1.5s ease-in-out infinite',
-                position: 'relative',
               }} />
             )}
           </div>
 
-          {/* Beat indicator */}
+          {/* No. label — bottom-left exactly like frame_106 */}
           <div style={{
             fontFamily: "'Press Start 2P', monospace",
-            fontSize: 6,
-            color: '#000',
-            border: '2px solid #000',
-            padding: '3px 8px',
-            background: '#F0EFE7',
-          }}>
-            {beat}/3
-          </div>
+            fontSize: 'max(5px, 1.5vw)',
+            color: '#0F380F',
+            alignSelf: 'flex-start',
+            marginTop: 4,
+            position: 'relative',
+          }}>No.069</div>
         </div>
 
-        {/* ─── RIGHT: Text screen ─── */}
+        {/* RIGHT: name, species, HT, WT */}
         <div style={{
           flex: 1,
+          padding: '10px 12px 8px',
           display: 'flex',
           flexDirection: 'column',
+          gap: 2,
+          background: '#9BBC0F',
+          position: 'relative',
+          overflow: 'hidden',
         }}>
-          {/* Name header */}
+          <Scanlines />
           <div style={{
-            background: '#000',
-            padding: '4px 10px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            fontFamily: "'VT323', monospace",
+            fontSize: 'max(20px, 5vw)',
+            color: '#0F380F',
+            fontWeight: 'bold',
+            lineHeight: 1.1,
+            position: 'relative',
+          }}>{data.name.toUpperCase()}</div>
+
+          <div style={{
+            fontFamily: "'VT323', monospace",
+            fontSize: 'max(16px, 4vw)',
+            color: '#0F380F',
+            position: 'relative',
+          }}>{species}</div>
+
+          <div style={{ height: 6 }} />
+
+          <div style={{
+            fontFamily: "'VT323', monospace",
+            fontSize: 'max(16px, 4vw)',
+            color: '#0F380F',
+            display: 'flex', gap: 6,
+            position: 'relative',
           }}>
-            <span style={{
-              fontFamily: "'Press Start 2P', monospace",
-              fontSize: 6,
-              color: '#F0EFE7',
-            }}>
-              {data.name.toUpperCase()}
-            </span>
+            <span>HT</span>
+            <span style={{ fontWeight: 'bold' }}>{data.height}</span>
           </div>
 
-          {/* GB green text area */}
           <div style={{
-            flex: 1,
-            background: '#9BBC0F',
-            border: '3px solid #000',
-            borderTop: 'none',
-            padding: '12px 14px',
+            fontFamily: "'VT323', monospace",
+            fontSize: 'max(16px, 4vw)',
+            color: '#0F380F',
+            display: 'flex', gap: 6,
             position: 'relative',
-            overflow: 'hidden',
-            minHeight: 148,
           }}>
-            {/* Scanlines */}
-            <div style={{
-              position: 'absolute',
-              inset: 0,
-              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 4px)',
-              pointerEvents: 'none',
-            }} />
-            <div style={{
-              fontFamily: "'VT323', monospace",
-              fontSize: 20,
-              color: '#0F380F',
-              lineHeight: 1.55,
-              whiteSpace: 'pre-wrap',
-              position: 'relative',
-            }}>
-              {displayed}
-              {typing && (
-                <span style={{ animation: 'blink 0.5s step-end infinite' }}>█</span>
-              )}
-            </div>
+            <span>WT</span>
+            <span style={{ fontWeight: 'bold' }}>{data.weight}</span>
           </div>
         </div>
       </div>
 
-      {/* ─── Tap hint ─── */}
-      <p style={{
-        fontFamily: "'Press Start 2P', monospace",
-        fontSize: 7,
-        color: '#000',
-        animation: typing ? 'none' : 'blink 0.8s step-end infinite',
-        opacity: typing ? 0.3 : 1,
+      {/* ── Decorative divider — small squares pattern matching frame_106 ── */}
+      <div style={{
+        background: '#9BBC0F',
+        borderBottom: '4px solid #0F380F',
+        padding: '3px 8px',
+        overflow: 'hidden',
+        flexShrink: 0,
       }}>
-        {typing ? '...' : '▼ TAP TO CONTINUE'}
-      </p>
+        <div style={{
+          fontFamily: "'Press Start 2P', monospace",
+          fontSize: 'max(5px, 1.3vw)',
+          color: '#0F380F',
+          letterSpacing: 2,
+          whiteSpace: 'nowrap',
+        }}>
+          {'■□'.repeat(30)}
+        </div>
+      </div>
+
+      {/* ── Scrolling description area — typing animation ── */}
+      <div style={{
+        flex: 1,
+        background: '#9BBC0F',
+        padding: '10px 14px',
+        position: 'relative',
+        overflow: 'hidden',
+        minHeight: 80,
+      }}>
+        <Scanlines />
+        <div style={{
+          fontFamily: "'VT323', monospace",
+          fontSize: 'max(18px, 4.5vw)',
+          color: '#0F380F',
+          lineHeight: 1.5,
+          whiteSpace: 'pre-wrap',
+          position: 'relative',
+        }}>
+          {displayed}
+          {typing && (
+            <span style={{ animation: 'blink 0.5s step-end infinite' }}>█</span>
+          )}
+        </div>
+      </div>
+
+      {/* ── Footer: tap hint ── */}
+      <div style={{
+        background: '#0F380F',
+        padding: '5px 14px',
+        display: 'flex', alignItems: 'center', justifyContent: 'flex-end',
+        flexShrink: 0,
+      }}>
+        <span style={{
+          fontFamily: "'Press Start 2P', monospace",
+          fontSize: 'max(5px, 1.3vw)',
+          color: '#9BBC0F',
+          animation: typing ? 'none' : 'blink 0.8s step-end infinite',
+          opacity: typing ? 0.4 : 1,
+        }}>
+          {typing ? '...' : '▼ TAP TO CONTINUE'}
+        </span>
+      </div>
     </div>
   )
 }

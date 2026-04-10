@@ -12,6 +12,8 @@ interface DialogueBoxProps {
   connectComplete?: boolean
   connectLoading?: boolean
   connectError?: string | null
+  /** 'fixed' (default) for full-screen scenes; 'absolute' inside GBFrame containers */
+  position?: 'fixed' | 'absolute'
 }
 
 export default function DialogueBox({
@@ -23,6 +25,7 @@ export default function DialogueBox({
   connectComplete,
   connectLoading,
   connectError,
+  position = 'fixed',
 }: DialogueBoxProps) {
   const [lineIdx, setLineIdx] = useState(0)
   const [displayed, setDisplayed] = useState('')
@@ -123,9 +126,11 @@ export default function DialogueBox({
     }
   }, [connectComplete])
 
+  const posStyle = position === 'absolute' ? { position: 'absolute' as const } : {}
+
   if (isConnect) {
     return (
-      <div className="dialogue-box">
+      <div className="dialogue-box" style={posStyle}>
         {speaker && <span className="dialogue-speaker">{speaker}</span>}
         {connectError ? (
           <div>
@@ -167,7 +172,7 @@ export default function DialogueBox({
   }
 
   return (
-    <div className="dialogue-box">
+    <div className="dialogue-box" style={posStyle}>
       {speaker && <span className="dialogue-speaker">{speaker}</span>}
       <div className="dialogue-text">{displayed}</div>
       {!typing && !doneRef.current && (

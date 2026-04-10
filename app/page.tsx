@@ -4,9 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { AppState, Scene } from '@/lib/types'
 import BootSequence from '@/components/BootSequence'
 import DialogueBox from '@/components/DialogueBox'
-import OakSprite from '@/components/OakSprite'
 import NameEntry from '@/components/NameEntry'
-import PokeballTable from '@/components/PokeballTable'
 import PokedexReveal from '@/components/PokedexReveal'
 import HoekemonCard from '@/components/HoekemonCard'
 import ShareButton from '@/components/ShareButton'
@@ -170,13 +168,23 @@ export default function Page() {
 
       case 'oak-intro':
         return (
-          <div className="screen" style={{ background: '#FFFFFF', position: 'relative' }}>
-            <OakSprite />
-            <DialogueBox
-              speaker="OAK"
-              lines={OAK_INTRO_LINES}
-              onComplete={() => wipeToScene('name-entry')}
-            />
+          // GBFrame: 10:9 container matching frame_011 aspect ratio perfectly
+          <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000' }}>
+            <div style={{
+              position: 'relative',
+              width: 'min(100vw, calc(100vh * 400 / 360))',
+              height: 'min(100vh, calc(100vw * 360 / 400))',
+              overflow: 'hidden',
+            }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/frames/frame_011.jpg" alt="" style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'fill' }} />
+              <DialogueBox
+                speaker="OAK"
+                lines={OAK_INTRO_LINES}
+                onComplete={() => wipeToScene('name-entry')}
+                position="absolute"
+              />
+            </div>
           </div>
         )
 
@@ -192,23 +200,35 @@ export default function Page() {
 
       case 'connect-instagram':
         return (
-          <div className="screen" style={{ background: '#FFFFFF', position: 'relative' }}>
-            <OakSprite />
-            <DialogueBox
-              speaker="OAK"
-              lines={[
-                ...OAK_CONNECT_LINES(state.playerName),
-                '__CONNECT_BUTTON__',
-                ...OAK_POST_CONNECT_LINES,
-              ]}
-              onComplete={() => wipeToScene('lab')}
-              onConnectClick={handleConnectClick}
-              connectComplete={connectComplete}
-              connectLoading={connectLoading}
-              connectError={connectError}
-            />
+          <>
+            {/* GBFrame with frame_011 — same Oak scene bg */}
+            <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000' }}>
+              <div style={{
+                position: 'relative',
+                width: 'min(100vw, calc(100vh * 400 / 360))',
+                height: 'min(100vh, calc(100vw * 360 / 400))',
+                overflow: 'hidden',
+              }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/frames/frame_011.jpg" alt="" style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'fill' }} />
+                <DialogueBox
+                  speaker="OAK"
+                  lines={[
+                    ...OAK_CONNECT_LINES(state.playerName),
+                    '__CONNECT_BUTTON__',
+                    ...OAK_POST_CONNECT_LINES,
+                  ]}
+                  onComplete={() => wipeToScene('lab')}
+                  onConnectClick={handleConnectClick}
+                  connectComplete={connectComplete}
+                  connectLoading={connectLoading}
+                  connectError={connectError}
+                  position="absolute"
+                />
+              </div>
+            </div>
 
-            {/* ODL Connect iframe overlay */}
+            {/* ODL Connect iframe overlay — fixed over everything */}
             {showConnectModal && connectUrl && (
               <div
                 style={{
@@ -249,74 +269,87 @@ export default function Page() {
                 </div>
               </div>
             )}
-          </div>
+          </>
         )
 
       case 'lab':
+        // GBFrame with frame_097 — authentic Gen 1 lab scene
+        // Pokeball hotspots positioned at exact image coordinates (percentage of 400×360 frame)
+        // Left ball ≈ (41%, 47%), Middle ≈ (53%, 45%), Right ≈ (64%, 44%)
         return (
-          <div className="screen lab-bg">
-            <div className="lab-floor-line" />
-            <div className="lab-table" />
-            <PokeballTable
-              onSelect={() => wipeToScene('battle-loading')}
-              selectedIndex={null}
-            />
-            <OakSprite
-              style={{ position: 'absolute', left: 40, bottom: 160, transform: 'none' }}
-            />
-            {/* Static prompt — no window click listener, pokeballs stay fully clickable */}
-            <div
-              style={{
-                position: 'fixed',
-                bottom: 0,
-                left: 0,
-                right: 0,
-                height: 128,
+          <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000' }}>
+            <div style={{
+              position: 'relative',
+              width: 'min(100vw, calc(100vh * 400 / 360))',
+              height: 'min(100vh, calc(100vw * 360 / 400))',
+              overflow: 'hidden',
+            }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/frames/frame_097.jpg" alt="" style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'fill' }} />
+
+              {/* Pokeball click hotspots — invisible, positioned over image pokeballs */}
+              {[
+                { left: '35%', top: '41%' },
+                { left: '47%', top: '39%' },
+                { left: '59%', top: '38%' },
+              ].map((pos, i) => (
+                <div
+                  key={i}
+                  onClick={() => wipeToScene('battle-loading')}
+                  style={{
+                    position: 'absolute',
+                    ...pos,
+                    width: '12%',
+                    height: '14%',
+                    cursor: 'pointer',
+                    // Subtle hover highlight
+                    borderRadius: '50%',
+                  }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.2)' }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.background = 'transparent' }}
+                />
+              ))}
+
+              {/* Dialogue box — sits over image's dialogue box area (bottom ~31% of frame) */}
+              <div style={{
+                position: 'absolute',
+                bottom: 0, left: 0, right: 0,
+                height: '32%',
                 background: 'var(--gb-cream)',
-                borderTop: '4px solid var(--gb-black)',
-                padding: '16px 20px 12px',
-                zIndex: 100,
+                borderTop: '3px solid var(--gb-black)',
+                boxShadow: 'inset 0 0 0 3px var(--gb-cream), inset 0 0 0 5px var(--gb-black)',
+                padding: '3% 5% 2%',
                 pointerEvents: 'none',
-              }}
-            >
-              <span
-                style={{
+              }}>
+                <span style={{
                   position: 'absolute',
                   top: -14,
-                  left: 16,
+                  left: '4%',
                   fontFamily: "'Press Start 2P', monospace",
-                  fontSize: 7,
+                  fontSize: 'max(5px, 1.4vw)',
                   background: 'var(--gb-cream)',
                   border: '2px solid var(--gb-black)',
                   padding: '3px 6px',
                   color: 'var(--gb-black)',
-                }}
-              >
-                OAK
-              </span>
-              <div
-                style={{
+                }}>OAK</span>
+                <div style={{
                   fontFamily: "'VT323', monospace",
-                  fontSize: 22,
+                  fontSize: 'max(18px, 4.5vw)',
                   color: 'var(--gb-black)',
-                  lineHeight: 1.5,
-                }}
-              >
-                Go ahead — choose a Pokéball!
-              </div>
-              <span
-                style={{
+                  lineHeight: 1.4,
+                }}>
+                  Go ahead — choose a HOE-KÉBALL!
+                </div>
+                <span style={{
                   position: 'absolute',
-                  bottom: 10,
-                  right: 14,
+                  bottom: '8%',
+                  right: '4%',
                   fontFamily: "'Press Start 2P', monospace",
-                  fontSize: 8,
+                  fontSize: 'max(6px, 1.5vw)',
                   color: 'var(--gb-black)',
                   animation: 'blink 0.8s step-end infinite',
-                }}
-              >
-                ▲
-              </span>
+                }}>▲</span>
+              </div>
             </div>
           </div>
         )
