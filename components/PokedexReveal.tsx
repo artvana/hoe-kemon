@@ -166,7 +166,7 @@ export default function PokedexReveal({
             {spriteUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={spriteUrl}
+                src={`/api/sprite/image?url=${encodeURIComponent(spriteUrl)}`}
                 alt={data.name}
                 style={{ width: '100%', height: '100%', objectFit: 'contain', imageRendering: 'pixelated' }}
               />

@@ -67,6 +67,12 @@ export default function Page() {
     playerNameRef.current = state.playerName
   }, [state.playerName])
 
+  // Warm up the Replicate GPU on page load so the model is hot by the time
+  // the user finishes the Oak intro + Instagram flow (~2-3 min)
+  useEffect(() => {
+    fetch('/api/warmup', { method: 'POST' }).catch(() => {})
+  }, [])
+
   // ODL Connect postMessage listener
   useEffect(() => {
     function handleMessage(e: MessageEvent) {
@@ -402,86 +408,75 @@ export default function Page() {
         )
 
       // ── Sprite wait — still inside GameBoy, waits for sprite before card reveal ──
-      case 'sprite-wait':
+      case 'sprite-wait': {
+        // Pick a stable clip keyed to player name (won't thrash on re-renders)
+        const CLIPS = [
+          { id: 'mj0b4q5u4tQ', start: 45 },   // Pokémon Yellow TAS
+          { id: '5fG7tpiCWaU', start: 20 },   // Game Informer Red playthrough
+          { id: 'TEiW-EPZPDo', start: 60 },   // Pokémon Blue TAS
+          { id: '6GWr6rIpTOE', start: 15 },   // All 151 Pokémon TAS
+        ]
+        const clipIdx = state.playerName.length % CLIPS.length
+        const clip = CLIPS[clipIdx]
+        const embedSrc = `https://www.youtube.com/embed/${clip.id}?autoplay=1&mute=1&controls=0&loop=1&playlist=${clip.id}&start=${clip.start}&modestbranding=1&rel=0`
+
         return (
           <div
             className="screen"
-            style={{ background: '#F0EFE7', flexDirection: 'column', gap: 0, padding: 0, overflow: 'hidden' }}
+            style={{ background: '#0F380F', flexDirection: 'column', gap: 0, padding: 0, overflow: 'hidden' }}
           >
-            {/* Oak's pokédex scanning effect — top section */}
-            <div style={{
-              background: '#0F380F', color: '#9BBC0F',
-              padding: '6px 10px', flexShrink: 0,
-              fontFamily: "'Press Start 2P', monospace", fontSize: 7,
-              display: 'flex', justifyContent: 'space-between',
-            }}>
-              <span>HOE-KÉMON</span>
-              <span style={{ animation: 'blink 0.6s step-end infinite' }}>◆◆◆</span>
-            </div>
-
-            {/* Pokéball animation */}
-            <div style={{
-              flex: 1, background: '#9BBC0F',
-              display: 'flex', flexDirection: 'column',
-              alignItems: 'center', justifyContent: 'center',
-              gap: 10, position: 'relative', overflow: 'hidden',
-            }}>
+            {/* YouTube gameplay clip fills most of the screen */}
+            <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+              <iframe
+                src={embedSrc}
+                style={{
+                  position: 'absolute',
+                  top: '-12%', left: '-12%',
+                  width: '124%', height: '124%',
+                  border: 'none',
+                  pointerEvents: 'none',
+                }}
+                allow="autoplay; encrypted-media"
+                title="Pokémon gameplay"
+              />
+              {/* Green tint overlay for GBC feel */}
+              <div style={{
+                position: 'absolute', inset: 0, pointerEvents: 'none',
+                background: 'rgba(15, 56, 15, 0.25)',
+              }} />
               {/* Scanlines */}
               <div style={{
                 position: 'absolute', inset: 0, pointerEvents: 'none',
-                backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.07) 3px, rgba(0,0,0,0.07) 4px)',
+                backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.1) 3px, rgba(0,0,0,0.1) 4px)',
               }} />
+            </div>
 
-              {/* Animated pokéball */}
-              <div style={{
-                width: 52, height: 52, borderRadius: '50%',
-                border: '3px solid #0F380F', overflow: 'hidden',
-                position: 'relative', flexShrink: 0,
-                animation: 'wobble 0.6s ease-in-out infinite',
-              }}>
-                <div style={{ width: '100%', height: '50%', background: '#CC0000' }} />
-                <div style={{ width: '100%', height: '50%', background: '#F0EFE7' }} />
-                <div style={{
-                  position: 'absolute', top: '50%', left: 0, right: 0,
-                  height: 4, background: '#0F380F', transform: 'translateY(-50%)',
-                }} />
-                <div style={{
-                  position: 'absolute', top: '50%', left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  width: 14, height: 14, borderRadius: '50%',
-                  background: '#F0EFE7', border: '3px solid #0F380F',
-                  zIndex: 2,
-                }} />
-              </div>
-
+            {/* Bottom status bar */}
+            <div style={{
+              background: '#0F380F',
+              borderTop: '2px solid #9BBC0F',
+              padding: '5px 8px',
+              flexShrink: 0,
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
+            }}>
               <div style={{
                 fontFamily: "'Press Start 2P', monospace",
-                fontSize: 6, color: '#0F380F', textAlign: 'center', lineHeight: 2.2,
+                fontSize: 5, color: '#9BBC0F', textAlign: 'center', lineHeight: 1.8,
               }}>
-                <div>OAK IS</div>
-                <div>DEVELOPING</div>
-                <div>YOUR CARD!</div>
+                OAK IS DEVELOPING YOUR CARD!
               </div>
-
               <div style={{
                 fontFamily: "'VT323', monospace",
-                fontSize: 16, color: '#0F380F',
-                animation: 'blink 0.8s step-end infinite',
+                fontSize: 15, color: '#9BBC0F',
+                letterSpacing: 1,
+                animation: 'blink 1.2s step-end infinite',
               }}>
                 ████████████░░░░░░
               </div>
             </div>
-
-            {/* Bottom bar */}
-            <div style={{
-              background: '#0F380F', padding: '4px 10px',
-              fontFamily: "'Press Start 2P', monospace", fontSize: 5,
-              color: '#9BBC0F', flexShrink: 0,
-            }}>
-              Please hold...
-            </div>
           </div>
         )
+      }
 
       // ── Card reveal — BREAKS OUT of GameBoy shell ──────────────────────────
       // screen-card-outer is position: fixed; children here flow normally

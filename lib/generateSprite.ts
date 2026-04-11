@@ -3,51 +3,42 @@ import { getOfficialArtworkUrl } from './pokemonIds'
 
 const replicate = new Replicate({ auth: process.env.REPLICATE_API_TOKEN })
 
-const NEGATIVE_PROMPT =
-  'human, person, text, watermark, multiple creatures, background, scenery, ' +
-  'realistic, photograph, 3d render, ugly, deformed'
+// flux-schnell: fast (4 steps), supports image input for img2img
+const MODEL = 'black-forest-labs/flux-schnell'
 
-// ── img2img sprite generation ─────────────────────────────────────────────────
-// Uses PokeAPI official artwork as init_image so the creature inherits the base
-// Pokémon's silhouette and feel, then the prompt drives the drag transformation.
 export async function startSpriteGeneration(
   visualDescription: string,
   name: string = '',
   type: string = '',
   basePokemon: string = ''
 ): Promise<string> {
-  const initImageUrl = getOfficialArtworkUrl(basePokemon)
+  const baseImageUrl = getOfficialArtworkUrl(basePokemon)
 
-  // Transformation-focused prompt — the init image handles the base shape,
-  // so the prompt just describes how it diverges from the original.
   const prompt = [
-    'official gen 1 Pokemon art style',
-    name ? `${name} the ${type} type Pokemon` : `a ${type} type Pokemon`,
+    'Gen 1 Pokemon official artwork by Ken Sugimori',
+    'watercolor illustration on plain white background',
+    'simple clean design, centered composition',
+    name ? `${name} a ${type}-type Pokemon creature` : `a ${type}-type Pokemon creature`,
     visualDescription.slice(0, 200),
-    'Ken Sugimori watercolour illustration',
-    'centered on white background',
-    'no text, no humans, no background scenery',
+    'no humans, no text, no background scenery',
   ].filter(Boolean).join(', ')
 
   const input: Record<string, unknown> = {
     prompt,
-    negative_prompt: NEGATIVE_PROMPT,
-    num_outputs: 1,
-    num_inference_steps: 20,
-    guidance_scale: 7.5,
+    num_inference_steps: 4,
     output_format: 'png',
+    aspect_ratio: '1:1',
   }
 
-  if (initImageUrl) {
-    // img2img — init image provides the base Pokémon silhouette
-    input.init_image = initImageUrl
-    input.strength = 0.65   // 65% prompt influence, 35% base image preserved
+  if (baseImageUrl) {
+    // img2img: start from the official Pokémon artwork so the creature
+    // inherits its silhouette and the Ken Sugimori art style for free
+    input.image = baseImageUrl
+    input.prompt_strength = 0.75  // 75% new content, 25% base image preserved
+    console.log('[Replicate] Using base Pokémon artwork:', basePokemon, baseImageUrl)
   }
 
-  const prediction = await replicate.predictions.create({
-    model: 'fofr/pokemon-sdxl',
-    input,
-  })
+  const prediction = await replicate.predictions.create({ model: MODEL, input })
   return prediction.id
 }
 
@@ -65,4 +56,19 @@ export async function getSpriteStatus(
     return { status: 'failed' }
   }
   return { status: 'loading' }
+}
+
+// Fire-and-forget warmup: starts a minimal generation to heat the GPU.
+export async function warmupModel(): Promise<void> {
+  try {
+    await replicate.predictions.create({
+      model: MODEL,
+      input: {
+        prompt: 'a fire type pokemon cartoon creature, white background',
+        num_inference_steps: 4,
+      },
+    })
+  } catch {
+    // Non-fatal — best-effort warmup
+  }
 }

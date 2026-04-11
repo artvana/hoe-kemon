@@ -32,10 +32,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `Hoekemon generation failed: ${msg}` }, { status: 500 })
   }
 
-  // 3. Start img2img sprite using the base Pokémon Claude picked.
-  //    The PokeAPI official artwork is used as init_image so the creature
-  //    inherits the base silhouette, then the prompt drives the transformation.
-  //    Non-fatal — card renders with shimmer placeholder on failure.
+  // 3. Start sprite generation (img2img from base Pokémon artwork via flux-schnell)
   let replicateId: string | null = null
   try {
     replicateId = await startSpriteGeneration(
@@ -44,8 +41,9 @@ export async function POST(req: NextRequest) {
       hoekemon.type1,
       hoekemon.basePokemon
     )
+    console.log('[Replicate] Sprite generation started:', replicateId)
   } catch (err) {
-    console.error('[Replicate] Sprite generation failed to start:', err)
+    console.error('[Replicate] Sprite generation failed:', err)
   }
 
   return NextResponse.json({ hoekemon, replicateId })

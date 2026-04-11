@@ -95,7 +95,22 @@ Format options:
 
 backstory: 3-4 sentences. PBS nature documentary narrator + drag confessional + Pokémon Mystery Dungeon dramatics. Opens with scene-setting about their Instagram world as if it's an ancient habitat. References their actual content themes as legendary Pokémon lore. Must include at least one real specific fact (follower count, username, bio quote, location if visible).
 
-pokedexEntry: Maximum 2 sentences, maximum 40 words total. No exceptions. Ball category description crossed with a Pokédex field entry. Clinical and scientific about something completely absurd from their real data. The drier the better. Return ONLY the text. No preamble.
+pokedexEntry: STRICT GEN 1 POKÉDEX FORMAT. Max 2 sentences. Max 30 words total. No exceptions.
+  Must match this exact register: terse, clinical, deadpan. Never starts with the HOE-KEMON's name. Uses "It" or "This POKéMON" or starts with an observation.
+
+  Real Gen 1 examples to copy the voice of:
+  - "Very lazy. Just eats and sleeps. As its rotund bulk builds, it becomes steadily more slothful." (Snorlax)
+  - "When several of these POKéMON gather, their electricity could build and cause lightning storms." (Pikachu)
+  - "Its genetic code is irregular. It may mutate if it is exposed to radiation from element STONEs." (Eevee)
+  - "Obviously prefers hot places. When it rains, steam is said to spout from the tip of its tail." (Charmander)
+  - "Under a full moon, this POKéMON likes to mimic the shadows of people and laugh at their fright." (Gengar)
+  - "Adores circular objects. Wanders the streets on a nightly basis to look for dropped loose change." (Meowth)
+
+  HOE-KEMON examples (apply the same voice to Instagram behavior):
+  - "Capable of consuming 47 stories without interacting with any of them. No purpose has been identified."
+  - "Posts exclusively at golden hour. Researchers have observed no activity between 10 PM and 11 AM."
+  - "Very protective of its follower count. Will unfollow anyone who does not follow back within 72 hours."
+  - "Its captions end in three to seven emojis. Scientists consider this a form of territorial marking."
 
 visualDescription: 2-3 sentences for AI image generation (Pokemon art style). Physical form based on their content themes and types. MUST INCLUDE: specific heel height, specific outfit style (drag gown? bodysuit? lewk?), color palette from their profile aesthetic, one absurd camp detail (a boa made of their most-liked emoji, platform boots shaped like their most-posted food, etc).
 

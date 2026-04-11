@@ -148,7 +148,7 @@ export default function HoekemonCard({ data, spriteUrl, forCapture = false }: Ho
             <div style={{
               height: 258,
               background: '#EDE5CF',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              position: 'relative',
               overflow: 'hidden',
             }}>
               {spriteUrl ? (
@@ -156,11 +156,11 @@ export default function HoekemonCard({ data, spriteUrl, forCapture = false }: Ho
                 <img
                   src={`/api/sprite/image?url=${encodeURIComponent(spriteUrl)}`}
                   alt={data.name}
-                  style={{ width: '88%', height: '100%', objectFit: 'contain', mixBlendMode: 'multiply' }}
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain' }}
                 />
               ) : (
                 <div style={{
-                  width: '100%', height: '100%',
+                  position: 'absolute', inset: 0,
                   background: 'linear-gradient(90deg, #ddd6b0 25%, #ece4c0 50%, #ddd6b0 75%)',
                   backgroundSize: '200% 100%',
                   animation: 'shimmer 1.5s infinite',
