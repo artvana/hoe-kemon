@@ -4,11 +4,11 @@ import './globals.css'
 import './gb-bootseq.css'
 
 const nunito = Nunito({
-  weight: ['800'],
+  weight: ['400', '700', '800'],
   subsets: ['latin'],
   variable: '--font-nunito',
   display: 'swap',
-  style: ['italic'],
+  style: ['normal', 'italic'],
 })
 
 const pressStart2P = Press_Start_2P({

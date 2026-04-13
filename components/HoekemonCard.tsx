@@ -65,27 +65,31 @@ function Colorless({ size = 13 }: { size?: number }) {
   )
 }
 
-// Waiting-state placeholder: mystery silhouette on dark background
+// Waiting-state placeholder: mystery silhouette on the type-gradient background
 function SpritePlaceholder({ typeColour }: { typeColour: string }) {
   return (
     <div style={{
       width: '100%', height: '100%',
-      background: 'linear-gradient(160deg,#1a1208 0%,#090604 60%,#141008 100%)',
+      background: 'transparent',
       display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center', gap: 8,
+      alignItems: 'center', justifyContent: 'center', gap: 10,
     }}>
-      {/* Silhouette blob */}
+      {/* Body silhouette */}
       <div style={{
-        width: 72, height: 80,
+        width: 90, height: 110,
         background: typeColour,
-        opacity: 0.3,
+        opacity: 0.35,
         borderRadius: '40% 40% 35% 35% / 50% 50% 45% 45%',
-        filter: 'blur(6px)',
+        filter: 'blur(8px)',
         animation: 'silhouette-pulse 2s ease-in-out infinite',
       }} />
       <span style={{
         fontFamily: "'Press Start 2P', monospace",
-        fontSize: 6, color: typeColour, opacity: 0.5, letterSpacing: 2,
+        fontSize: 6,
+        color: typeColour,
+        opacity: 0.6,
+        letterSpacing: 3,
+        filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.2))',
         animation: 'blink 1.4s step-end infinite',
       }}>???</span>
     </div>
@@ -100,9 +104,11 @@ export default function HoekemonCard({ data, spriteUrl, forCapture = false }: Ho
   const template = TYPE_TEMPLATE[data.type1] ?? 'neutral'
   const typeColour = TYPE_COLOURS[data.type1] ?? '#A8A878'
 
-  const VT = `'VT323', monospace`
   const PS2 = `'Press Start 2P', monospace`
-  const BOLD = `'Nunito', 'Arial Black', sans-serif`
+  const BOLD = `'Nunito', 'Arial Black', sans-serif`   // 800 italic — name, HP, power
+  const CARD = `'Nunito', sans-serif`                  // 700 — attack names
+  const BODY = `'Nunito', sans-serif`                  // 400 — pokédex, values, footer
+  const VT = `'VT323', monospace`                      // retro — species bar only
 
   function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
     if (forCapture) return
@@ -142,9 +148,9 @@ export default function HoekemonCard({ data, spriteUrl, forCapture = false }: Ho
       }}
     >
 
-      {/* ── HEADER — name + HP (type symbol already on template) ── */}
+      {/* ── HEADER — name + HP. Orange frame runs display y=25–89, header sits in it ── */}
       <div style={{
-        position: 'absolute', top: 10, left: 18, right: 44,
+        position: 'absolute', top: 36, left: 61, right: 88,
         display: 'flex', alignItems: 'flex-end', gap: 6,
       }}>
         {/* Stage label */}
@@ -178,14 +184,16 @@ export default function HoekemonCard({ data, spriteUrl, forCapture = false }: Ho
         </div>
       </div>
 
-      {/* ── ILLUSTRATION BOX — overlaid on the white rectangle in template ── */}
-      {/* Template white rectangle: ~x=28-446, y=56-333 at native 474×659 → scaled: x=30-470, y=59-351 */}
+      {/* ── ILLUSTRATION BOX — pixel-measured from fire template ── */}
+      {/* native x=58–417 → display x=61–440. native y=84–338 → display y=89–357. */}
       <div style={{
         position: 'absolute',
-        top: 59, left: 30, right: 30,
-        height: 292,
+        top: 89, left: 61, right: 60,
+        height: 268,
         overflow: 'hidden',
-        borderRadius: 2,
+        borderRadius: 3,
+        background: `radial-gradient(ellipse at 50% 55%, ${lighten(typeColour, 0.88)} 0%, ${lighten(typeColour, 0.65)} 50%, ${lighten(typeColour, 0.38)} 100%)`,
+        boxShadow: 'inset 0 0 0 2.5px rgba(0,0,0,0.45)',
       }}>
         {spriteUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -195,8 +203,7 @@ export default function HoekemonCard({ data, spriteUrl, forCapture = false }: Ho
             style={{
               width: '100%', height: '100%',
               objectFit: 'contain',
-              padding: '6px',
-              boxSizing: 'border-box',
+              mixBlendMode: 'multiply',
             }}
           />
         ) : (
@@ -213,26 +220,29 @@ export default function HoekemonCard({ data, spriteUrl, forCapture = false }: Ho
         </div>
       </div>
 
-      {/* ── SPECIES BAR — gold bar below illustration ── */}
-      {/* Gold bar at native y=333-352 → scaled y=351-371 */}
+      {/* ── SPECIES BAR — gold info strip: native y=353–373 → display y=372–393 ── */}
       <div style={{
         position: 'absolute',
-        top: 353, left: 30, right: 30,
+        top: 374, left: 61, right: 60,
         height: 19,
-        display: 'flex', alignItems: 'center',
+        overflow: 'hidden',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
         <span style={{
-          fontFamily: VT, fontSize: 13, fontStyle: 'italic',
+          fontFamily: VT, fontSize: 10, fontStyle: 'italic',
           color: '#3a2800',
-          whiteSpace: 'nowrap', overflow: 'hidden',
+          whiteSpace: 'nowrap',
+          display: 'inline-block',
+          transform: 'scaleX(0.82)',
+          transformOrigin: 'center center',
         }}>
           {data.type1} HOE-KÉMON&nbsp;&nbsp;HT: {data.height}&nbsp;&nbsp;WT: {data.weight}
         </span>
       </div>
 
       {/* ── ATTACKS ── */}
-      {/* Content area starts at native y=352 → scaled y=372 */}
-      <div style={{ position: 'absolute', top: 376, left: 26, right: 26 }}>
+      {/* Content area starts after gold strip ~y=386 */}
+      <div style={{ position: 'absolute', top: 396, left: 61, right: 60 }}>
         {data.attacks.slice(0, 2).map((atk, i) => (
           <div key={i}>
             {i > 0 && (
@@ -245,7 +255,7 @@ export default function HoekemonCard({ data, spriteUrl, forCapture = false }: Ho
                 ))}
               </div>
               <span style={{
-                fontFamily: VT, fontSize: 18, fontWeight: 'bold',
+                fontFamily: CARD, fontSize: 16, fontWeight: 700,
                 color: '#111', flex: 1, lineHeight: 1,
               }}>
                 {atk.name}
@@ -267,8 +277,8 @@ export default function HoekemonCard({ data, spriteUrl, forCapture = false }: Ho
           borderTop: '1px solid rgba(0,0,0,0.1)',
         }}>
           <span style={{
-            fontFamily: VT, fontSize: 13, fontStyle: 'italic',
-            color: '#2a2a2a', lineHeight: 1.4, display: 'block',
+            fontFamily: BODY, fontSize: 11.5, fontStyle: 'italic', fontWeight: 400,
+            color: '#2a2a2a', lineHeight: 1.45, display: 'block',
           }}>
             {data.pokedexEntry}
           </span>
@@ -280,16 +290,20 @@ export default function HoekemonCard({ data, spriteUrl, forCapture = false }: Ho
       {/* Values go just below those labels */}
       <div style={{
         position: 'absolute',
-        top: 596, left: 26, right: 26,
-        display: 'flex',
+        top: 590, left: 61, right: 60,
+        display: 'flex', alignItems: 'center',
+        height: 20,
       }}>
         {/* Weakness */}
-        <div style={{ flex: 1 }}>
-          <span style={{ fontFamily: VT, fontSize: 13, color: '#111' }}>{data.weakness}</span>
+        <div style={{ flex: 1, overflow: 'hidden' }}>
+          <span style={{
+            fontFamily: BODY, fontSize: 11, fontWeight: 400, color: '#111',
+            whiteSpace: 'nowrap',
+          }}>{data.weakness}</span>
         </div>
         {/* Resistance */}
         <div style={{ flex: 1, textAlign: 'center' }}>
-          <span style={{ fontFamily: VT, fontSize: 16, color: '#111' }}>—</span>
+          <span style={{ fontFamily: BODY, fontSize: 11, fontWeight: 400, color: '#111' }}>—</span>
         </div>
         {/* Retreat cost */}
         <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', gap: 3, alignItems: 'center' }}>
@@ -301,12 +315,12 @@ export default function HoekemonCard({ data, spriteUrl, forCapture = false }: Ho
       {/* Bottom white rectangle at native y≈579-638 → scaled y≈611-673 */}
       <div style={{
         position: 'absolute',
-        top: 620, left: 30, right: 30,
+        top: 624, left: 61, right: 60,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
-        <span style={{ fontFamily: VT, fontSize: 10, color: 'rgba(0,0,0,0.4)' }}>Illus. Prof. Oak</span>
-        <span style={{ fontFamily: VT, fontSize: 10, color: 'rgba(0,0,0,0.35)' }}>LV.{data.level} #069</span>
-        <span style={{ fontFamily: VT, fontSize: 10, color: 'rgba(0,0,0,0.4)' }}>69/069 ✦</span>
+        <span style={{ fontFamily: BODY, fontSize: 8.5, fontWeight: 400, color: 'rgba(0,0,0,0.4)' }}>Illus. Prof. Oak</span>
+        <span style={{ fontFamily: BODY, fontSize: 8.5, fontWeight: 400, color: 'rgba(0,0,0,0.35)' }}>LV.{data.level} #069</span>
+        <span style={{ fontFamily: BODY, fontSize: 8.5, fontWeight: 400, color: 'rgba(0,0,0,0.4)' }}>69/069 ✦</span>
       </div>
 
       {/* ── Holographic shimmer ── */}

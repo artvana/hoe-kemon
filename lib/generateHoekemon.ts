@@ -101,6 +101,16 @@ pokedexEntry: STRICT GEN 1 POKÉDEX FORMAT. Max 2 sentences. Max 30 words. No ex
 
   THE COMEDY COMES FROM THE CONTRAST: the sentence structure is identical to a real Pokédex entry. The subject matter is Instagram or drag behaviour. Do not wink at the joke. Play it completely straight.
 
+  ABSOLUTE RULE: NO NUMBERS. No follower counts, post counts, like counts, or any statistics. The comedy comes from behavioural observation, not data recitation. Mine qualitative signals instead:
+  - Content themes (brunch, gym, travel, pets, thirst traps, aesthetic flats, sunsets)
+  - Caption style (emoji-heavy, motivational quotes, one-word responses, no captions at all)
+  - Aesthetic (moody dark filter, overexposed white, warm tones, chaotic collage)
+  - Posting behaviour (disappears for weeks then dumps 12 at once, only posts on weekends, story-first poster)
+  - Brand/sponsor signals (always a promo code in bio, collab tags, gifted disclosures)
+  - Social behaviour (never replies to comments, only posts group photos where they look best, tags location only at expensive restaurants)
+  - Bio energy (motivational quote, link in bio with 11 links, just an emoji)
+  - Recurring subjects (the same dog, the same café, always traveling but never with anyone)
+
   Real Gen 1 entries — COPY THIS EXACT VOICE:
   - "Adores circular objects. Wanders the streets on a nightly basis to look for dropped loose change." (Meowth)
   - "Very lazy. Just eats and sleeps. As its rotund bulk builds, it becomes steadily more slothful." (Snorlax)
@@ -111,16 +121,17 @@ pokedexEntry: STRICT GEN 1 POKÉDEX FORMAT. Max 2 sentences. Max 30 words. No ex
   - "A POKéMON that has been over-hunted almost to extinction. It can ferry people across the water." (Lapras)
   - "When its huge eyes light up, it sings a mysteriously soothing melody that lulls its enemies to sleep." (Jigglypuff)
 
-  HOE-KEMON examples — same structure, applied to their actual Instagram data (use REAL numbers/facts):
+  HOE-KEMON examples — same voice, qualitative behaviour only (NO numbers):
   - "Adores rectangular screens. Wanders comment sections on a nightly basis to leave three-word affirmations."
-  - "Obviously prefers ring-lit environments. When natural lighting occurs, post frequency drops to near zero."
+  - "Obviously prefers ring-lit environments. When natural lighting occurs, posting ceases entirely."
   - "Under a full moon, this HOE-KÉMON reposts content from larger accounts and captions it 'inspo'."
-  - "Very protective of its follower count. Will unfollow anyone who does not reciprocate within 48 hours."
-  - "While lulling followers with a vacant caption, this wily HOE-KÉMON quietly archives its worst posts."
-  - "It has posted 312 times. Scientists have identified no discernible narrative arc."
+  - "Very protective of its curated grid. Will archive any post that receives fewer likes than average."
+  - "While lulling followers with a vacant caption, this wily HOE-KÉMON quietly deletes their worst posts."
   - "Adores brunch. Photographs every meal from above. Has never been observed eating any of it."
+  - "Obviously thrives in direct sunlight. Bio contains a promo code that has never been used."
+  - "When tagged in candid photos, this HOE-KÉMON enters a period of extended hibernation."
 
-  NOW write one for THIS specific person using their real data. Reference an actual number, habit, or bio detail.
+  NOW write one for THIS specific person. Mine their actual content themes, caption habits, aesthetic, or posting behaviour. Qualitative and specific. No numbers.
 
 visualDescription: 2-3 sentences for AI image generation. This is the MOST IMPORTANT field — make it outrageous, camp, and slutty. This creature is a drag queen Pokémon. Go FULL fantasy. Be specific about drag elements.
 
@@ -149,10 +160,11 @@ Rock→snorlax | Bug→meowth (transformation arc) | Dragon→charizard or mewtw
 
 ═══ RULES ═══
 - MINE THE DATA. Before writing anything, scan for: exact @username, exact follower count, exact following count, bio text (quote it), location, post count, recurring hashtags, content themes, brand deals visible, caption style (emoji-heavy? low effort? tryhard?), any recurring elements (dogs? coffee? gym selfies? sunset photos?).
-- SPECIFICITY IS EVERYTHING. "Posts food content" → FAIL. "Has 23 posts of the same acai bowl" → SERVE. "Captions every gym selfie with 'the grind 💪'" → SERVE. "Bio says 'living my best life' — a threat" → SERVE.
+- SPECIFICITY IS EVERYTHING. "Posts food content" → FAIL. "Captions every gym selfie with 'the grind 💪'" → SERVE. "Bio says 'living my best life' — a threat" → SERVE. "Only tags location at places that cost over £30 a plate" → SERVE.
 - The comedy comes from accuracy, not invention. Read what's actually there.
 - ATTACKS: All 4 must name an RPDR challenge/moment AND something from their actual content. Zero generic names.
 - CATCHPHRASE: Reference a real number (follower count, post count) or a real bio quote. Specific = funny.
+- POKÉDEX ENTRY: NEVER use any numbers. Qualitative behaviour only. See examples above.
 - HP default is 69. Only deviate if the data screams otherwise.
 - NEVER make up data that isn't in the Instagram data provided.
 

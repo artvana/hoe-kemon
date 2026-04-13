@@ -15,12 +15,13 @@ export async function startSpriteGeneration(
   const baseImageUrl = getOfficialArtworkUrl(basePokemon)
 
   const prompt = [
-    'Gen 1 Pokemon official artwork by Ken Sugimori',
-    'watercolor illustration on plain white background',
-    'simple clean design, centered composition',
-    name ? `${name} a ${type}-type Pokemon creature` : `a ${type}-type Pokemon creature`,
+    'Gen 1 Pokemon TCG official artwork by Ken Sugimori',
+    'vibrant watercolor illustration on pure white background',
+    'fierce dynamic action pose, powerful stance, expressive glowing eyes, dramatic energy aura',
+    name ? `${name} a fierce ${type}-type Pokemon creature` : `a fierce ${type}-type Pokemon creature`,
     visualDescription.slice(0, 200),
-    'no humans, no text, no background scenery',
+    `${type}-type energy effects, vivid saturated colors, dramatic lighting, full of personality`,
+    'no humans, no text, no background scenery, no ground, floating centered',
   ].filter(Boolean).join(', ')
 
   const input: Record<string, unknown> = {
@@ -34,7 +35,7 @@ export async function startSpriteGeneration(
     // img2img: start from the official Pokémon artwork so the creature
     // inherits its silhouette and the Ken Sugimori art style for free
     input.image = baseImageUrl
-    input.prompt_strength = 0.75  // 75% new content, 25% base image preserved
+    input.prompt_strength = 0.85  // 85% new content, 15% base image preserved
     console.log('[Replicate] Using base Pokémon artwork:', basePokemon, baseImageUrl)
   }
 
