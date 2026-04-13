@@ -95,24 +95,44 @@ Format options:
 
 backstory: 3-4 sentences. PBS nature documentary narrator + drag confessional + Pokémon Mystery Dungeon dramatics. Opens with scene-setting about their Instagram world as if it's an ancient habitat. References their actual content themes as legendary Pokémon lore. Must include at least one real specific fact (follower count, username, bio quote, location if visible).
 
-pokedexEntry: STRICT GEN 1 POKÉDEX FORMAT. Max 2 sentences. Max 30 words total. No exceptions.
-  Must match this exact register: terse, clinical, deadpan. Never starts with the HOE-KEMON's name. Uses "It" or "This POKéMON" or starts with an observation.
+pokedexEntry: STRICT GEN 1 POKÉDEX FORMAT. Max 2 sentences. Max 30 words. No exceptions. No flourishes.
+  Register: terse, clinical, deadpan — like a field biologist who has stopped asking questions.
+  Never starts with the HOE-KEMON's name. Starts with "It", "This POKéMON", "Obviously", "Adores", "Very", "When", or a flat observation.
 
-  Real Gen 1 examples to copy the voice of:
+  THE COMEDY COMES FROM THE CONTRAST: the sentence structure is identical to a real Pokédex entry. The subject matter is Instagram or drag behaviour. Do not wink at the joke. Play it completely straight.
+
+  Real Gen 1 entries — COPY THIS EXACT VOICE:
+  - "Adores circular objects. Wanders the streets on a nightly basis to look for dropped loose change." (Meowth)
   - "Very lazy. Just eats and sleeps. As its rotund bulk builds, it becomes steadily more slothful." (Snorlax)
-  - "When several of these POKéMON gather, their electricity could build and cause lightning storms." (Pikachu)
-  - "Its genetic code is irregular. It may mutate if it is exposed to radiation from element STONEs." (Eevee)
   - "Obviously prefers hot places. When it rains, steam is said to spout from the tip of its tail." (Charmander)
   - "Under a full moon, this POKéMON likes to mimic the shadows of people and laugh at their fright." (Gengar)
-  - "Adores circular objects. Wanders the streets on a nightly basis to look for dropped loose change." (Meowth)
+  - "While lulling its enemies with its vacant look, this wily POKéMON will use psychokinetic powers." (Psyduck)
+  - "It was created by a scientist after years of horrific gene splicing and DNA engineering experiments." (Mewtwo)
+  - "A POKéMON that has been over-hunted almost to extinction. It can ferry people across the water." (Lapras)
+  - "When its huge eyes light up, it sings a mysteriously soothing melody that lulls its enemies to sleep." (Jigglypuff)
 
-  HOE-KEMON examples (apply the same voice to Instagram behavior):
-  - "Capable of consuming 47 stories without interacting with any of them. No purpose has been identified."
-  - "Posts exclusively at golden hour. Researchers have observed no activity between 10 PM and 11 AM."
-  - "Very protective of its follower count. Will unfollow anyone who does not follow back within 72 hours."
-  - "Its captions end in three to seven emojis. Scientists consider this a form of territorial marking."
+  HOE-KEMON examples — same structure, applied to their actual Instagram data (use REAL numbers/facts):
+  - "Adores rectangular screens. Wanders comment sections on a nightly basis to leave three-word affirmations."
+  - "Obviously prefers ring-lit environments. When natural lighting occurs, post frequency drops to near zero."
+  - "Under a full moon, this HOE-KÉMON reposts content from larger accounts and captions it 'inspo'."
+  - "Very protective of its follower count. Will unfollow anyone who does not reciprocate within 48 hours."
+  - "While lulling followers with a vacant caption, this wily HOE-KÉMON quietly archives its worst posts."
+  - "It has posted 312 times. Scientists have identified no discernible narrative arc."
+  - "Adores brunch. Photographs every meal from above. Has never been observed eating any of it."
 
-visualDescription: 2-3 sentences for AI image generation (Pokemon art style). Physical form based on their content themes and types. MUST INCLUDE: specific heel height, specific outfit style (drag gown? bodysuit? lewk?), color palette from their profile aesthetic, one absurd camp detail (a boa made of their most-liked emoji, platform boots shaped like their most-posted food, etc).
+  NOW write one for THIS specific person using their real data. Reference an actual number, habit, or bio detail.
+
+visualDescription: 2-3 sentences for AI image generation. This is the MOST IMPORTANT field — make it outrageous, camp, and slutty. This creature is a drag queen Pokémon. Go FULL fantasy. Be specific about drag elements.
+
+  MANDATORY inclusions (all of them):
+  - Exact platform heel height (e.g. "8-inch platform stilettos", "6-inch chrome thigh-high boots")
+  - Full drag outfit (e.g. "floor-length sequined mermaid gown with hip slit", "rhinestone corset bodysuit", "latex catsuit with feather epaulettes")
+  - Dramatic drag makeup feature (e.g. "razor-sharp cat-eye liner extending to the temples", "rhinestone brow arch", "ombre lip in two clashing neons")
+  - One absurd camp accessory tied to their actual Instagram content (e.g. a boa made entirely of avocado toast, acrylic nails shaped like champagne flutes, a crown of gym protein shakers)
+  - Color palette derived from their profile aesthetic or most-used filters
+  - Body type: creature-like but glamorous (think RuPaul's Drag Race meets Pokémon Mystery Dungeon)
+
+  Example: "A serpentine Electric-type creature with a rhinestone-studded corset, 9-inch chrome platform knee-high boots, and razor-sharp lightning-bolt liner extending past her temples. She wears a boa made entirely of charging cables and selfie ring lights. Her color palette is overexposed white and influencer-gold, with talon-length acrylic nails shaped like Instagram notification icons."
 
 height: Vague and camp. Examples: "Taller in heels", "5'2\" (6'8\" in spirit)", "Platform dependent", "As tall as their ambition, which is concerning"
 
