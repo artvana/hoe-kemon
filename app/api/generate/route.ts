@@ -4,6 +4,7 @@ export const maxDuration = 60
 import { fetchInstagramData } from '@/lib/odlClient'
 import { generateWithClaude } from '@/lib/generateHoekemon'
 import { startSpriteGeneration } from '@/lib/generateSprite'
+import { pickBasePokemon } from '@/lib/pokemonIds'
 
 export async function POST(req: NextRequest) {
   const { connectionId, playerName } = await req.json()
@@ -32,14 +33,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `Hoekemon generation failed: ${msg}` }, { status: 500 })
   }
 
-  // 3. Start sprite generation (img2img from base Pokémon artwork via flux-schnell)
+  // 3. Start sprite generation (img2img from randomly selected base Pokémon per type)
+  const basePokemon = pickBasePokemon(hoekemon.type1)
   let replicateId: string | null = null
   try {
     replicateId = await startSpriteGeneration(
       hoekemon.visualDescription,
       hoekemon.name,
       hoekemon.type1,
-      hoekemon.basePokemon
+      basePokemon,
+      hoekemon.gender ?? 'nonbinary'
     )
     console.log('[Replicate] Sprite generation started:', replicateId)
   } catch (err) {

@@ -265,7 +265,7 @@ export default function Page() {
                     onClick={(e) => { e.stopPropagation(); setShowConnectModal(false) }}
                     style={{
                       position: 'absolute', top: -36, right: 0,
-                      fontFamily: "'Press Start 2P', monospace", fontSize: 8,
+                      fontFamily: "'Pokemon GB', monospace", fontSize: 8,
                       color: 'white', background: 'none', border: 'none', cursor: 'pointer',
                     }}
                   >
@@ -335,7 +335,7 @@ export default function Page() {
             {generateError ? (
               <>
                 <div style={{
-                  fontFamily: "'Press Start 2P', monospace", fontSize: 8,
+                  fontFamily: "'Pokemon GB', monospace", fontSize: 8,
                   color: '#CC0000', textAlign: 'center', maxWidth: 280, lineHeight: 2,
                 }}>
                   SCAN FAILED
@@ -352,7 +352,7 @@ export default function Page() {
                     beginGeneration(state.connectionId!, state.playerName)
                   }}
                   style={{
-                    fontFamily: "'Press Start 2P', monospace", fontSize: 8,
+                    fontFamily: "'Pokemon GB', monospace", fontSize: 8,
                     color: '#000', background: 'none', border: '2px solid #000',
                     padding: '10px 16px', cursor: 'pointer', marginTop: 8,
                   }}
@@ -363,7 +363,7 @@ export default function Page() {
             ) : (
               <>
                 <div style={{
-                  fontFamily: "'Press Start 2P', monospace", fontSize: 9,
+                  fontFamily: "'Pokemon GB', monospace", fontSize: 9,
                   color: '#000', lineHeight: 2, textAlign: 'center',
                 }}>
                   <div>OAK used</div>
@@ -392,7 +392,7 @@ export default function Page() {
               state.scene === 'pokedex-species' ? 1
               : state.scene === 'pokedex-backstory' ? 2 : 3
             }
-            onComplete={() => wipeToScene(state.spriteUrl ? 'card-reveal' : 'sprite-wait')}
+            onComplete={() => wipeToScene(state.spriteUrl ? 'card-reveal' : state.spriteLoading ? 'sprite-wait' : 'card-reveal')}
             onBeatAdvance={(beat) => {
               if (beat === 2) setState((s) => ({ ...s, scene: 'pokedex-backstory' }))
               if (beat === 3) setState((s) => ({ ...s, scene: 'pokedex-entry' }))
@@ -460,18 +460,36 @@ export default function Page() {
               display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
             }}>
               <div style={{
-                fontFamily: "'Press Start 2P', monospace",
+                fontFamily: "'Pokemon GB', monospace",
                 fontSize: 5, color: '#9BBC0F', textAlign: 'center', lineHeight: 1.8,
               }}>
                 OAK IS DEVELOPING YOUR CARD!
               </div>
-              <div style={{
-                fontFamily: "'VT323', monospace",
-                fontSize: 15, color: '#9BBC0F',
-                letterSpacing: 1,
-                animation: 'blink 1.2s step-end infinite',
-              }}>
-                ████████████░░░░░░
+              <div style={{ width: '100%', position: 'relative' }}>
+                <style>{`
+                  @keyframes progress-fill {
+                    0%   { width: 15%; }
+                    60%  { width: 80%; }
+                    85%  { width: 91%; }
+                    100% { width: 96%; }
+                  }
+                `}</style>
+                {/* Track */}
+                <div style={{
+                  width: '100%', height: 8,
+                  background: '#0a2a0a',
+                  border: '1px solid #9BBC0F',
+                  borderRadius: 2,
+                  overflow: 'hidden',
+                }}>
+                  {/* Fill — crawls right over ~80s, never quite reaches 100% */}
+                  <div style={{
+                    height: '100%',
+                    background: '#9BBC0F',
+                    animation: 'progress-fill 80s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+                    borderRadius: 2,
+                  }} />
+                </div>
               </div>
             </div>
           </div>

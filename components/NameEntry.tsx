@@ -42,7 +42,7 @@ export default function NameEntry({ onSubmit }: NameEntryProps) {
     if (clean) onSubmit(clean)
   }
 
-  const PS2 = "'Press Start 2P', monospace"
+  const PS2 = "'Pokemon GB', monospace"
   const VT = "'VT323', monospace"
 
   // ── Type mode: text entry ─────────────────────────────────────────────────

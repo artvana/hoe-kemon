@@ -28,7 +28,8 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;   /* display at top, controls at bottom */
+  justify-content: flex-start;      /* screen sticks to top on mobile */
+  gap: 20px;                        /* controlled gap between screen & controls */
   width: 100%;
   height: 100%;
   border-radius: 20px;
@@ -64,6 +65,8 @@
     height: 580px;
     flex-shrink: 0;
     border-radius: 20px;
+    justify-content: space-between;  /* fixed height — space-between looks right */
+    gap: 0;
   }
   .gameboy::after { display: none; }
 }

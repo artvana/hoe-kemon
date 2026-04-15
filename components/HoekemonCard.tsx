@@ -110,6 +110,12 @@ export default function HoekemonCard({ data, spriteUrl, forCapture = false }: Ho
   const BODY = `'Nunito', sans-serif`                  // 400 — pokédex, values, footer
   const VT = `'VT323', monospace`                      // retro — species bar only
 
+  const height = data.height.length > 14 ? data.height.slice(0, 13) + '…' : data.height
+  const speciesText = `${data.type1} HOE-KÉMON  HT: ${height}  WT: ${data.weight}`
+  const speciesFontSize = speciesText.length > 80 ? 6.5 : speciesText.length > 65 ? 7.5 : speciesText.length > 50 ? 8.5 : 10
+  const weaknessFontSize = data.weakness.length > 30 ? 8.5 : data.weakness.length > 22 ? 9.5 : 11
+  const pokedexFontSize = data.pokedexEntry.length > 200 ? 9 : data.pokedexEntry.length > 150 ? 10 : 11.5
+
   function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
     if (forCapture) return
     const rect = e.currentTarget.getBoundingClientRect()
@@ -229,14 +235,14 @@ export default function HoekemonCard({ data, spriteUrl, forCapture = false }: Ho
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
         <span style={{
-          fontFamily: VT, fontSize: 10, fontStyle: 'italic',
+          fontFamily: VT, fontSize: speciesFontSize, fontStyle: 'italic',
           color: '#3a2800',
           whiteSpace: 'nowrap',
           display: 'inline-block',
           transform: 'scaleX(0.82)',
           transformOrigin: 'center center',
         }}>
-          {data.type1} HOE-KÉMON&nbsp;&nbsp;HT: {data.height}&nbsp;&nbsp;WT: {data.weight}
+          {data.type1} HOE-KÉMON&nbsp;&nbsp;HT: {height}&nbsp;&nbsp;WT: {data.weight}
         </span>
       </div>
 
@@ -275,9 +281,11 @@ export default function HoekemonCard({ data, spriteUrl, forCapture = false }: Ho
           marginTop: 8,
           padding: '5px 4px',
           borderTop: '1px solid rgba(0,0,0,0.1)',
+          maxHeight: 108,
+          overflow: 'hidden',
         }}>
           <span style={{
-            fontFamily: BODY, fontSize: 11.5, fontStyle: 'italic', fontWeight: 400,
+            fontFamily: BODY, fontSize: pokedexFontSize, fontStyle: 'italic', fontWeight: 400,
             color: '#2a2a2a', lineHeight: 1.45, display: 'block',
           }}>
             {data.pokedexEntry}
@@ -295,14 +303,14 @@ export default function HoekemonCard({ data, spriteUrl, forCapture = false }: Ho
         height: 20,
       }}>
         {/* Weakness */}
-        <div style={{ flex: 1, overflow: 'hidden' }}>
+        <div style={{ flex: 2, overflow: 'hidden' }}>
           <span style={{
-            fontFamily: BODY, fontSize: 11, fontWeight: 400, color: '#111',
+            fontFamily: BODY, fontSize: weaknessFontSize, fontWeight: 400, color: '#111',
             whiteSpace: 'nowrap',
           }}>{data.weakness}</span>
         </div>
         {/* Resistance */}
-        <div style={{ flex: 1, textAlign: 'center' }}>
+        <div style={{ flex: 0.8, textAlign: 'center' }}>
           <span style={{ fontFamily: BODY, fontSize: 11, fontWeight: 400, color: '#111' }}>—</span>
         </div>
         {/* Retreat cost */}

@@ -45,7 +45,8 @@ export interface HoekemonData {
   pokedexEntry: string
   height: string
   weight: string
-  basePokemon: string    // base Pokémon for img2img — must be a key in POKEMON_IDS
+  gender?: 'male' | 'female' | 'nonbinary'  // inferred from Instagram data
+  basePokemon?: string   // base Pokémon for img2img — selected randomly at generation time
   spriteUrl?: string
 }
 

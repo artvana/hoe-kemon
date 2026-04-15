@@ -52,7 +52,7 @@ export default function BattleScreen({ onComplete }: BattleScreenProps) {
 
       {/* Enemy HUD */}
       <div className="battle-hud battle-hud-enemy">
-        <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 7, marginBottom: 6 }}>???</div>
+        <div style={{ fontFamily: "'Pokemon GB', monospace", fontSize: 7, marginBottom: 6 }}>???</div>
         <HPBar current={100} max={100} label="HP" />
       </div>
 
@@ -62,7 +62,7 @@ export default function BattleScreen({ onComplete }: BattleScreenProps) {
 
       {/* Player HUD */}
       <div className="battle-hud battle-hud-player">
-        <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 7, marginBottom: 6 }}>
+        <div style={{ fontFamily: "'Pokemon GB', monospace", fontSize: 7, marginBottom: 6 }}>
           OAK
         </div>
         <HPBar current={1} max={999} label="HP" />

@@ -3,26 +3,28 @@ import { getOfficialArtworkUrl } from './pokemonIds'
 
 const replicate = new Replicate({ auth: process.env.REPLICATE_API_TOKEN })
 
-// flux-schnell: fast (4 steps), supports image input for img2img
 const MODEL = 'black-forest-labs/flux-schnell'
 
 export async function startSpriteGeneration(
   visualDescription: string,
   name: string = '',
   type: string = '',
-  basePokemon: string = ''
+  basePokemon: string = '',
+  gender: 'male' | 'female' | 'nonbinary' = 'nonbinary'
 ): Promise<string> {
   const baseImageUrl = getOfficialArtworkUrl(basePokemon)
 
   const prompt = [
-    'Gen 1 Pokemon TCG official artwork by Ken Sugimori',
-    'vibrant watercolor illustration on pure white background',
-    'fierce dynamic action pose, powerful stance, expressive glowing eyes, dramatic energy aura',
-    name ? `${name} a fierce ${type}-type Pokemon creature` : `a fierce ${type}-type Pokemon creature`,
-    visualDescription.slice(0, 200),
-    `${type}-type energy effects, vivid saturated colors, dramatic lighting, full of personality`,
-    'no humans, no text, no background scenery, no ground, floating centered',
+    'official Nintendo Pokemon Trading Card Game illustration, Ken Sugimori watercolor style',
+    'pure white background, white background, centered composition, creature only',
+    'single creature centered, no trainer no human no person',
+    name ? `${name} a ${type}-type Pokemon creature` : `a ${type}-type Pokemon creature`,
+    visualDescription.slice(0, 250),
+    `${type}-type energy aura, vivid saturated colors, expressive face`,
+    'drag queen accessories on creature body: platform boots on creature claws, rhinestone corset on creature midsection, feather boa around creature neck',
   ].filter(Boolean).join(', ')
+
+  console.log(`[Replicate] Generating sprite (gender: ${gender})`)
 
   const input: Record<string, unknown> = {
     prompt,
@@ -32,11 +34,11 @@ export async function startSpriteGeneration(
   }
 
   if (baseImageUrl) {
-    // img2img: start from the official Pokémon artwork so the creature
-    // inherits its silhouette and the Ken Sugimori art style for free
     input.image = baseImageUrl
-    input.prompt_strength = 0.85  // 85% new content, 15% base image preserved
-    console.log('[Replicate] Using base Pokémon artwork:', basePokemon, baseImageUrl)
+    input.prompt_strength = 0.58  // low = base Pokémon shape locked in, prompt adds style on top  // slightly lower so Pokémon shape comes through more
+    console.log('[Replicate] img2img base:', basePokemon, baseImageUrl)
+  } else {
+    console.log('[Replicate] No base image for', basePokemon, '— txt2img')
   }
 
   const prediction = await replicate.predictions.create({ model: MODEL, input })
@@ -59,13 +61,12 @@ export async function getSpriteStatus(
   return { status: 'loading' }
 }
 
-// Fire-and-forget warmup: starts a minimal generation to heat the GPU.
 export async function warmupModel(): Promise<void> {
   try {
     await replicate.predictions.create({
       model: MODEL,
       input: {
-        prompt: 'a fire type pokemon cartoon creature, white background',
+        prompt: 'official Pokemon TCG artwork Ken Sugimori style, cute sexy fire type pokemon creature, white background',
         num_inference_steps: 4,
       },
     })

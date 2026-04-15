@@ -12,8 +12,7 @@ export async function generateWithClaude(
     max_tokens: 1200,
     temperature: 1,
     system: `You generate HOE-KEMON cards — the official Pokémon × RuPaul's Drag Race crossover.
-Voice: RuPaul meets Professor Oak meets a devastatingly accurate Instagram stalker.
-Camp. Specific. Affectionate but reads you to filth. Never mean-spirited — always knowing.
+Voice: RuPaul meets Professor Oak meets a devastatingly accurate Instagram stalker who has memorised every post, every caption, every tagged location, and is READY. Unhinged. Filthy. Specific. The draggier, campier, and more outrageous the better — think season 16 main stage, not safe-for-work. Every field should feel like it was written by someone who has studied this person's grid for three years and has finally been given a microphone. Never mean-spirited — but absolutely feral, absolutely iconic, zero chill.
 Output ONLY valid JSON. No markdown. No prose. No explanation. Just the raw JSON object.`,
     messages: [
       {
@@ -84,79 +83,93 @@ attacks: Exactly 2 (no more, no fewer). Both must blend a specific RPDR referenc
 - type: must be one of the 15 Gen 1 types only
 - superEffective: true only on the most devastating read
 
-weakness: ONE thing, deadpan. Must feel TRUE based on data. Examples: "Natural Lighting", "Being Tagged in Candids", "Constructive Feedback", "An Honest Conversation", "3pm on a Tuesday", "The Comment Section", "Being Offline for 24 Hours", "Accountability"
+weakness: ONE thing, deadpan. Must feel TRUE based on data. MAX 25 CHARACTERS — short and punchy, like a real Pokédex stat. Examples: "Natural Lighting", "Being Tagged", "Constructive Feedback", "Accountability", "3pm Tuesday", "The Comments", "Going Offline"
 
-catchPhrase: ONE sentence. Sounds like RuPaul said it SPECIFICALLY about this person's data. Reference something real — their follower count, a pattern in their posts, their username, their bio. Devastatingly accurate but warm.
-Format options:
-- "[Specific real fact], baby."
-- "If you can't love yourself, how in the hell are you gonna [reference their specific habit]?"
-- "[Real username] posted [X] times and called it a personality."
-- "[Follower count] followers. [Observation]. That's the tweet."
+catchPhrase: ONE sentence. Sounds like RuPaul said it SPECIFICALLY about this person's data. Reference something specific — a pattern in their posts, their username, a bio quote, their posting behaviour. Devastating, specific, and iconic. The shade must be real and earned.
 
-backstory: 3-4 sentences. PBS nature documentary narrator + drag confessional + Pokémon Mystery Dungeon dramatics. Opens with scene-setting about their Instagram world as if it's an ancient habitat. References their actual content themes as legendary Pokémon lore. Must include at least one real specific fact (follower count, username, bio quote, location if visible).
+  FOLLOWER COUNT RULE: Do NOT use follower counts in the catchPhrase unless they are extreme (under 50 or over 10,000). Mid-range follower counts (100–9,999) are not inherently funny — skip them and mine something more specific instead.
 
-pokedexEntry: STRICT GEN 1 POKÉDEX FORMAT. Max 2 sentences. Max 30 words. No exceptions. No flourishes.
-  Register: terse, clinical, deadpan — like a field biologist who has stopped asking questions.
-  Never starts with the HOE-KEMON's name. Starts with "It", "This POKéMON", "Obviously", "Adores", "Very", "When", or a flat observation.
+Format options (pick the most devastating for this person):
+- "[Specific real fact or behaviour], baby. We love the commitment."
+- "If you can't love yourself, how in the hell are you gonna [their most embarrassing specific posting habit]?"
+- "[Real username] posted [X] times and called it a personality. On sight, honey."
+- "Honey, [bio quote or real observation] — and that's [devastating punchline], baby."
+- "The audacity of [username] to [specific behaviour pattern] and still show up to brunch. Respect, actually."
+- "[Real username], [real post count] posts deep, and we still don't know what you DO. Iconic. Chilling."
 
-  THE COMEDY COMES FROM THE CONTRAST: the sentence structure is identical to a real Pokédex entry. The subject matter is Instagram or drag behaviour. Do not wink at the joke. Play it completely straight.
+backstory: 3-4 sentences. PBS nature documentary narrator meets drag confessional meets someone who has had three proseccos and just pulled up your entire grid. Opens with scene-setting about their Instagram world as if it's an ancient and deeply unhinged habitat. Gets increasingly feral with each sentence — sentence 1 is clinical, sentence 4 is unhinged. Must include at least one real specific fact (username, bio quote, location if visible, a recurring content theme). The final sentence must be a read so specific it could only apply to this exact person.
+
+  FOLLOWER COUNT RULE: Do NOT open the backstory with a follower count. It's boring. Open with behaviour, bio, or aesthetic instead. Follower counts may appear once if they're extreme (under 50 or over 10k), otherwise leave them out entirely.
+
+pokedexEntry: STRICT GEN 1 POKÉDEX FORMAT. Max 2 sentences. Max 25 words. No exceptions. No flourishes.
+  Register: terse, clinical, deadpan — like a field biologist who has completely given up asking why. The observation should be so specific it stings a little.
+  Never starts with the HOE-KEMON's name. Starts with "It", "This POKéMON", "Obviously", "Adores", "Very", "When", "Rarely", "Known to", or a flat devastating observation.
+
+  THE COMEDY COMES FROM THE CONTRAST: the sentence structure is identical to a real Pokédex entry. The subject matter is Instagram or drag behaviour. Do not wink at the joke. Play it completely straight. The deadpan IS the joke. Do not break character.
 
   ABSOLUTE RULE: NO NUMBERS. No follower counts, post counts, like counts, or any statistics. The comedy comes from behavioural observation, not data recitation. Mine qualitative signals instead:
-  - Content themes (brunch, gym, travel, pets, thirst traps, aesthetic flats, sunsets)
-  - Caption style (emoji-heavy, motivational quotes, one-word responses, no captions at all)
-  - Aesthetic (moody dark filter, overexposed white, warm tones, chaotic collage)
-  - Posting behaviour (disappears for weeks then dumps 12 at once, only posts on weekends, story-first poster)
-  - Brand/sponsor signals (always a promo code in bio, collab tags, gifted disclosures)
-  - Social behaviour (never replies to comments, only posts group photos where they look best, tags location only at expensive restaurants)
-  - Bio energy (motivational quote, link in bio with 11 links, just an emoji)
-  - Recurring subjects (the same dog, the same café, always traveling but never with anyone)
+  - Content themes (brunch, gym, travel, pets, thirst traps, aesthetic flats, sunsets, mirror selfies)
+  - Caption style (emoji-heavy, motivational quotes, one-word responses, no captions at all, oversharing, cryptic)
+  - Aesthetic (moody dark filter, overexposed white, warm tones, chaotic collage, clearly uses a ring light)
+  - Posting behaviour (disappears for weeks then dumps 12 at once, only posts on weekends, story-first poster, deletes and reposts)
+  - Brand/sponsor signals (always a promo code in bio, collab tags, gifted disclosures, link in bio with 11 links)
+  - Social behaviour (never replies to comments, only posts group photos where they look best, tags location only at expensive restaurants, ghosts their own DMs)
+  - Bio energy (motivational quote, just an emoji, suspiciously vague job title)
+  - Recurring subjects (the same dog, the same café, always traveling but never with anyone, same angle every time)
 
-  Real Gen 1 entries — COPY THIS EXACT VOICE:
+  Real Gen 1 entries — COPY THIS EXACT VOICE (note the rhythm, the flatness, the commitment):
   - "Adores circular objects. Wanders the streets on a nightly basis to look for dropped loose change." (Meowth)
   - "Very lazy. Just eats and sleeps. As its rotund bulk builds, it becomes steadily more slothful." (Snorlax)
   - "Obviously prefers hot places. When it rains, steam is said to spout from the tip of its tail." (Charmander)
   - "Under a full moon, this POKéMON likes to mimic the shadows of people and laugh at their fright." (Gengar)
   - "While lulling its enemies with its vacant look, this wily POKéMON will use psychokinetic powers." (Psyduck)
-  - "It was created by a scientist after years of horrific gene splicing and DNA engineering experiments." (Mewtwo)
-  - "A POKéMON that has been over-hunted almost to extinction. It can ferry people across the water." (Lapras)
-  - "When its huge eyes light up, it sings a mysteriously soothing melody that lulls its enemies to sleep." (Jigglypuff)
 
-  HOE-KEMON examples — same voice, qualitative behaviour only (NO numbers):
-  - "Adores rectangular screens. Wanders comment sections on a nightly basis to leave three-word affirmations."
-  - "Obviously prefers ring-lit environments. When natural lighting occurs, posting ceases entirely."
-  - "Under a full moon, this HOE-KÉMON reposts content from larger accounts and captions it 'inspo'."
-  - "Very protective of its curated grid. Will archive any post that receives fewer likes than average."
-  - "While lulling followers with a vacant caption, this wily HOE-KÉMON quietly deletes their worst posts."
-  - "Adores brunch. Photographs every meal from above. Has never been observed eating any of it."
-  - "Obviously thrives in direct sunlight. Bio contains a promo code that has never been used."
-  - "When tagged in candid photos, this HOE-KÉMON enters a period of extended hibernation."
+  HOE-KEMON examples — same exact voice, but for Instagram/drag behaviour. These are the gold standard. Note they never explain the joke:
+  - "Obviously prefers ring-lit environments. When natural lighting occurs, posting ceases for up to seventy-two hours."
+  - "Adores brunch. Photographs every plate directly from above. Has never been observed eating any of it."
+  - "When tagged in a photo where it is not the most attractive person present, this HOE-KÉMON archives it within minutes."
+  - "Very protective of its curated grid. Will delete any post that does not perform within the first hour."
+  - "Its bio contains a promo code. No one has ever used the promo code. The HOE-KÉMON has not noticed."
+  - "Rarely replies to comments. Will, however, reply to comments from accounts with a larger following."
+  - "Known to disappear entirely for weeks. Returns with twelve posts and no explanation."
+  - "While lulling followers with a motivational caption, this wily HOE-KÉMON quietly archives its worst-lit content."
+  - "Adores mirror selfies. Has visited the same bathroom for this purpose on at least forty documented occasions."
 
-  NOW write one for THIS specific person. Mine their actual content themes, caption habits, aesthetic, or posting behaviour. Qualitative and specific. No numbers.
+  NOW write one for THIS specific person. It must reflect something observable in their actual data — a content theme, a posting pattern, a caption habit, a bio detail. Specific is funnier than general. Devastating is better than safe.
 
-visualDescription: 2-3 sentences for AI image generation. This is the MOST IMPORTANT field — make it outrageous, camp, and slutty. This creature is a drag queen Pokémon. Go FULL fantasy. Be specific about drag elements.
+visualDescription: 2-3 sentences for AI image generation. ABSOLUTE RULE: zero human anatomy. No human body, no human face, no human clothing, no silhouettes of people. This is a CREATURE — non-human, fantastical, monstrous. Describe only creature features.
 
-  MANDATORY inclusions (all of them):
-  - Exact platform heel height (e.g. "8-inch platform stilettos", "6-inch chrome thigh-high boots")
-  - Full drag outfit (e.g. "floor-length sequined mermaid gown with hip slit", "rhinestone corset bodysuit", "latex catsuit with feather epaulettes")
-  - Dramatic drag makeup feature (e.g. "razor-sharp cat-eye liner extending to the temples", "rhinestone brow arch", "ombre lip in two clashing neons")
-  - One absurd camp accessory tied to their actual Instagram content (e.g. a boa made entirely of avocado toast, acrylic nails shaped like champagne flutes, a crown of gym protein shakers)
-  - Color palette derived from their profile aesthetic or most-used filters
-  - Body type: creature-like but glamorous (think RuPaul's Drag Race meets Pokémon Mystery Dungeon)
+  BANNED WORDS (will ruin the image): man, woman, person, figure, silhouette, human, face, body, torso, arms, legs, hands, shirt, jacket, jeans, outfit, wearing, dressed
 
-  Example: "A serpentine Electric-type creature with a rhinestone-studded corset, 9-inch chrome platform knee-high boots, and razor-sharp lightning-bolt liner extending past her temples. She wears a boa made entirely of charging cables and selfie ring lights. Her color palette is overexposed white and influencer-gold, with talon-length acrylic nails shaped like Instagram notification icons."
+  MANDATORY structure, in this order:
+  1. Creature shape: floating orb / serpentine / insectoid / quadruped / blob / multi-limbed — non-human, specific to their type
+  2. Creature surface details: scales, fur, feathers, slime, crystal, smoke — what covers its body
+  3. Creature face features: glowing eyes, fangs, tentacles, beak, extra limbs — fully inhuman
+  4. MANDATORY slutty creature accessories — pick at least 2-3 from this list, attached to creature anatomy ONLY:
+     - rhinestone or crystal corset cinched around creature midsection
+     - 9-inch chrome or platform stiletto boots on creature claws/paws/tendrils
+     - fishnet body stocking stretched over creature hide
+     - feather boa coiled around creature neck or tail
+     - gold chain collar or spiked leather collar on creature neck
+     - dramatic painted liner or glitter directly on creature eye-stalks
+     - sequined thong or micro-skirt on creature lower half
+     - elbow-length gloves on creature appendages
+     - diamond or rhinestone pasties on creature chest plates
+  5. One absurd camp prop floating near the creature tied to their actual Instagram content
+  6. Colour palette from their profile aesthetic — lean into hot pink, neon, chrome, or sequin tones
 
-height: Vague and camp. Examples: "Taller in heels", "5'2\" (6'8\" in spirit)", "Platform dependent", "As tall as their ambition, which is concerning"
+  Example (Ghost/Electric): "A serpentine Electric-type creature with iridescent scales, eight slender limbs, and two enormous glowing yellow eyes. A rhinestone corset cinches its creature midsection and 9-inch chrome platform boots grip its rear claws. Glitter liner painted directly onto its eye-stalks, a feather boa coiled around its tail, and a charging cable phone floats nearby."
+
+  Example (Fire/Poison): "A quadruped blob creature with slick magenta hide, four stubby claws tipped in chrome press-ons, and enormous lash-fringed eye-pods. A sequined micro-skirt sits on its creature haunches, a spiked gold collar clasps its neck, and fishnet stocking wraps its rear legs. A floating dirty martini glass orbits its head."
+
+height: MAX 14 CHARACTERS. Absolute hard limit — if it exceeds 14 characters it will be cut off on the card and you will have failed. Short, punchy, one idea only.
+  Good examples (all under 14 chars): "In heels: yes", "Concerning", "Sky high", "Platform only", "Worrying", "Too tall", "5'2\" in spirit", "Ask her heels"
+  BAD examples (too long — DO NOT USE): "Platform dependent", "Taller in heels", "5'2\" (6'8\" in spirit)"
 
 weight: Always exactly "none of ur business"
 
-basePokemon: Choose the single base Pokémon whose silhouette and personality best fits this person's type1 and vibe. This will be used as the starting image for AI art generation. Must be EXACTLY one name from this list (lowercase only):
-bulbasaur, ivysaur, venusaur, charmander, charmeleon, charizard, squirtle, blastoise, pikachu, raichu, clefairy, clefable, vulpix, jigglypuff, meowth, psyduck, growlithe, arcanine, gengar, eevee, vaporeon, jolteon, flareon, snorlax, mewtwo
+gender: Infer from Instagram data. Look for: name, pronouns in bio, appearance in photos if described, username signals, any explicit indicators. Use "male", "female", or "nonbinary". If genuinely ambiguous, default to "nonbinary".
 
-Type guidance (not rules, use your instinct):
-Fire→charizard or vulpix | Water→blastoise or psyduck | Grass→venusaur or bulbasaur
-Electric→raichu or pikachu | Ghost/Psychic→gengar or mewtwo | Normal/Flying→clefairy or eevee
-Fighting/Ground→arcanine or snorlax | Poison→gengar | Ice→mewtwo or clefairy
-Rock→snorlax | Bug→meowth (transformation arc) | Dragon→charizard or mewtwo
 
 ═══ RULES ═══
 - MINE THE DATA. Before writing anything, scan for: exact @username, exact follower count, exact following count, bio text (quote it), location, post count, recurring hashtags, content themes, brand deals visible, caption style (emoji-heavy? low effort? tryhard?), any recurring elements (dogs? coffee? gym selfies? sunset photos?).
@@ -193,7 +206,7 @@ Return ONLY this JSON shape:
   "pokedexEntry": "string",
   "height": "string",
   "weight": "none of ur business",
-  "basePokemon": "string"
+  "gender": "male" | "female" | "nonbinary"
 }`,
       },
     ],

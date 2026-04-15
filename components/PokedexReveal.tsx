@@ -21,6 +21,23 @@ const SPECIES: Record<string, string> = {
   Rock: 'VETERAN', Ghost: 'CAMP', Dragon: 'ICONIC',
 }
 
+// Split text into screen-sized chunks at word boundaries (~120 chars fits ~3-4 lines)
+function chunkText(text: string, maxChars = 120): string[] {
+  if (text.length <= maxChars) return [text]
+  const chunks: string[] = []
+  let remaining = text
+  while (remaining.length > maxChars) {
+    let cut = remaining.lastIndexOf(' ', maxChars)
+    const cutN = remaining.lastIndexOf('\n', maxChars)
+    if (cutN > cut) cut = cutN
+    if (cut <= 0) cut = maxChars
+    chunks.push(remaining.slice(0, cut).trimEnd())
+    remaining = remaining.slice(cut).trimStart()
+  }
+  if (remaining.trim()) chunks.push(remaining)
+  return chunks
+}
+
 export default function PokedexReveal({
   data,
   spriteUrl,
@@ -29,11 +46,14 @@ export default function PokedexReveal({
   onBeatAdvance,
 }: PokedexRevealProps) {
   const [beat, setBeat] = useState(initialBeat)
+  const [chunk, setChunk] = useState(0)
   const [displayed, setDisplayed] = useState('')
   const [typing, setTyping] = useState(false)
 
   const beatRef = useRef(beat)
   beatRef.current = beat
+  const chunkRef = useRef(chunk)
+  chunkRef.current = chunk
   const typingRef = useRef(false)
   typingRef.current = typing
   const intervalRef = useRef<ReturnType<typeof setInterval>>()
@@ -44,20 +64,21 @@ export default function PokedexReveal({
 
   const species = SPECIES[data.type1] ?? data.type1.toUpperCase()
 
-  // What types in the scrolling description area for each beat
-  const beatText = useMemo(() => {
-    switch (beat) {
-      case 1: return data.pokedexEntry
-      case 2: return data.backstory
-      case 3: return `Lv.${data.level}  HP ${data.hp}\n\n${data.catchPhrase}`
-      default: return ''
-    }
-  }, [beat, data])
+  // Pre-compute all chunks for all beats
+  const allChunks = useMemo(() => [
+    chunkText(data.pokedexEntry),
+    chunkText(data.backstory),
+    chunkText(`Lv.${data.level}  HP ${data.hp}\n\n${data.catchPhrase}`),
+  ], [data])
 
-  const beatTextRef = useRef(beatText)
-  beatTextRef.current = beatText
+  const allChunksRef = useRef(allChunks)
+  allChunksRef.current = allChunks
 
-  // Type out the beat text
+  const currentText = allChunks[beat - 1]?.[chunk] ?? ''
+  const currentTextRef = useRef(currentText)
+  currentTextRef.current = currentText
+
+  // Type out the current chunk
   useEffect(() => {
     clearInterval(intervalRef.current)
     let i = 0
@@ -65,22 +86,27 @@ export default function PokedexReveal({
     setTyping(true)
     intervalRef.current = setInterval(() => {
       i++
-      setDisplayed(beatText.slice(0, i))
-      if (i >= beatText.length) {
+      setDisplayed(currentText.slice(0, i))
+      if (i >= currentText.length) {
         clearInterval(intervalRef.current)
         setTyping(false)
       }
     }, 22)
     return () => clearInterval(intervalRef.current)
-  }, [beatText])
+  }, [currentText])
 
-  // Click to skip typing / advance beats
+  // Click to skip typing / advance chunk / advance beat
   useEffect(() => {
     function onClick() {
       if (typingRef.current) {
         clearInterval(intervalRef.current)
-        setDisplayed(beatTextRef.current)
+        setDisplayed(currentTextRef.current)
         setTyping(false)
+        return
+      }
+      const beatChunks = allChunksRef.current[beatRef.current - 1] ?? []
+      if (chunkRef.current < beatChunks.length - 1) {
+        setChunk(c => c + 1)
         return
       }
       const next = beatRef.current + 1
@@ -89,6 +115,7 @@ export default function PokedexReveal({
       } else {
         onBeatAdvanceRef.current?.(next)
         setBeat(next)
+        setChunk(0)
       }
     }
     window.addEventListener('click', onClick)
@@ -127,11 +154,12 @@ export default function PokedexReveal({
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         flexShrink: 0,
       }}>
-        <span style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 8, color: '#9BBC0F', letterSpacing: 2 }}>
+        <span style={{ fontFamily: "'Pokemon GB', monospace", fontSize: 8, color: '#9BBC0F', letterSpacing: 2 }}>
           HOE-KDEX
         </span>
-        <span style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 7, color: '#9BBC0F' }}>
+        <span style={{ fontFamily: "'Pokemon GB', monospace", fontSize: 7, color: '#9BBC0F' }}>
           {beat}/3
+          {allChunks[beat - 1].length > 1 ? ` ${chunk + 1}/${allChunks[beat - 1].length}` : ''}
         </span>
       </div>
 
@@ -181,7 +209,7 @@ export default function PokedexReveal({
             )}
           </div>
           <div style={{
-            fontFamily: "'Press Start 2P', monospace",
+            fontFamily: "'Pokemon GB', monospace",
             fontSize: 5,
             color: '#0F380F',
             position: 'absolute',
@@ -236,7 +264,7 @@ export default function PokedexReveal({
         flexShrink: 0,
       }}>
         <div style={{
-          fontFamily: "'Press Start 2P', monospace",
+          fontFamily: "'Pokemon GB', monospace",
           fontSize: 5,
           color: '#0F380F',
           letterSpacing: 2,
@@ -276,7 +304,7 @@ export default function PokedexReveal({
         flexShrink: 0,
       }}>
         <span style={{
-          fontFamily: "'Press Start 2P', monospace",
+          fontFamily: "'Pokemon GB', monospace",
           fontSize: 5,
           color: '#9BBC0F',
           animation: typing ? 'none' : 'blink 0.8s step-end infinite',
